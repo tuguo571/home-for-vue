@@ -2,84 +2,19 @@
 import { ref, computed } from "vue";
 import PageTransition from "@/components/PageTransition.vue";
 import Tabs from "@/components/ui/Tabs.vue";
-import JsonFormatterView from "@/views/tools/JsonFormatterView.vue";
-import TimestampView from "@/views/tools/TimestampView.vue";
 import BookmarksView from "@/views/tools/BookmarksView.vue";
-
-interface Project {
-  id: number;
-  title: string;
-  description: string;
-  tags: string[];
-  image: string;
-  link?: string;
-  status: "completed" | "developing" | "planning";
-}
-
-interface Tool {
-  id: number;
-  title: string;
-  description: string;
-  tags: string[];
-  image: string;
-  component: any;
-  status: "online" | "developing" | "planning";
-}
+import { projects } from "@/config/projects";
+import { tools } from "@/config/tools";
+import { tabs } from "@/config/navigation";
 
 const activeTab = ref("projects");
 const activeToolId = ref<number | null>(null);
 
-const tabs = [
-  { id: "projects", label: "个人项目", icon: "🎨" },
-  { id: "tools", label: "在线工具", icon: "🛠" },
-  { id: "bookmarks", label: "网址导航", icon: "🔖" },
-];
-
-const projects = ref<Project[]>([
-  {
-    id: 1,
-    title: "个人主页",
-    description:
-      "基于 Vue 3 + TypeScript 开发的个人主页，支持暗色模式和主题定制",
-    tags: ["Vue 3", "TypeScript", "Tailwind CSS"],
-    image: "https://picsum.photos/800/600?random=1",
-    link: "https://your-site.com",
-    status: "completed",
-  },
-  {
-    id: 2,
-    title: "在线工具集",
-    description: "包含多个实用的在线工具，如 JSON 格式化、时间戳转换等",
-    tags: ["Vue", "工具集", "在线应用"],
-    image: "https://picsum.photos/800/600?random=2",
-    link: "/tools",
-    status: "developing",
-  },
-]);
-
-const tools = ref<Tool[]>([
-  {
-    id: 1,
-    title: "JSON 格式化工具",
-    description: "在线 JSON 格式化工具，支持压缩、美化、验证和转换等功能",
-    tags: ["JSON", "格式化", "在线工具"],
-    image: "https://picsum.photos/800/600?random=1",
-    component: JsonFormatterView,
-    status: "online",
-  },
-  {
-    id: 2,
-    title: "时间戳转换器",
-    description: "时间戳与日期格式互转工具，支持多种格式和时区设置",
-    tags: ["时间戳", "日期转换", "时区"],
-    image: "https://picsum.photos/800/600?random=2",
-    component: TimestampView,
-    status: "online",
-  },
-]);
+const projectsList = ref(projects);
+const toolsList = ref(tools);
 
 const activeTool = computed(() =>
-  tools.value.find((tool) => tool.id === activeToolId.value),
+  toolsList.value.find((tool) => tool.id === activeToolId.value),
 );
 
 const showToolList = () => {
@@ -95,21 +30,29 @@ const handleTabChange = async () => {
   await new Promise((resolve) => setTimeout(resolve, 300));
   isLoading.value = false;
 };
+
+// 页面切换动画延迟
+const getTransitionDelay = (index: number) => `${index * 100}ms`;
 </script>
 
 <template>
   <div class="container mx-auto px-4 py-12">
     <PageTransition name="bounce">
-      <div class="max-w-4xl mx-auto text-center mb-12">
-        <h1 class="text-4xl font-bold mb-4">个人项目</h1>
+      <div class="max-w-4xl mx-auto text-center mb-8">
+        <h1
+          class="text-5xl font-bold mb-4 text-gray-900 dark:text-white tracking-tight"
+        >
+          工具集
+        </h1>
       </div>
     </PageTransition>
 
     <div class="max-w-6xl mx-auto">
-      <div class="mb-12">
+      <div class="mb-8">
         <Tabs
           v-model="activeTab"
           :tabs="tabs"
+          class="justify-center max-w-md mx-auto bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-full p-2 shadow-lg flex items-center gap-2"
           @update:modelValue="handleTabChange"
         />
       </div>
@@ -117,7 +60,7 @@ const handleTabChange = async () => {
       <!-- 加载状态 -->
       <div v-if="isLoading" class="flex items-center justify-center py-12">
         <div
-          class="loader dark:border-t-gray-700 dark:border-r-gray-700 dark:border-l-gray-700"
+          class="loader dark:border-t-gray-700 dark:border-r-gray-700 dark:border-l-gray-700 animate-pulse"
         ></div>
       </div>
 
@@ -127,43 +70,44 @@ const handleTabChange = async () => {
           v-show="activeTab === 'projects'"
           name="list"
           tag="div"
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8"
+          class="grid grid-cols-1 md:grid-cols-2 gap-8 px-4"
         >
           <article
-            v-for="project in projects"
+            v-for="(project, index) in projectsList"
             :key="project.id"
-            class="group bg-white dark:bg-gray-800/90 rounded-xl shadow-lg overflow-hidden hover:shadow-xl dark:hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-2 relative dark:border dark:border-gray-700/50 dark:hover:glow-lg dark:hover:border-primary/30"
+            :style="{ transitionDelay: getTransitionDelay(index) }"
+            class="group bg-white dark:bg-gray-800/90 rounded-xl shadow-lg overflow-hidden hover:shadow-xl dark:hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-2 relative dark:border dark:border-gray-700/50 dark:hover:glow-lg dark:hover:border-primary/30 flex flex-col animate-fade-in"
           >
             <!-- 项目卡片悬停效果 -->
             <div
               class="absolute inset-0 bg-primary/5 dark:bg-primary/10 opacity-0 group-hover:opacity-100 transition-all duration-300 dark:group-hover:backdrop-blur-sm"
             ></div>
-            <div class="relative h-48 overflow-hidden">
+            <div class="relative h-56 overflow-hidden">
               <img
                 :src="project.image"
                 :alt="project.title"
                 class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
               />
               <div
-                class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4"
+                class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
               >
                 <a
                   v-if="project.link && project.status === 'completed'"
                   :href="project.link"
                   target="_blank"
-                  class="px-6 py-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors text-white"
+                  class="px-8 py-3 bg-white/20 hover:bg-white/30 rounded-full transition-all duration-300 text-white font-medium hover:scale-105 hover:shadow-lg backdrop-blur-sm"
                 >
                   访问项目
                 </a>
                 <span
                   v-if="project.status !== 'completed'"
-                  class="px-6 py-2 bg-white/20 rounded-full text-white"
+                  class="px-8 py-3 bg-white/20 rounded-full text-white backdrop-blur-sm"
                 >
                   {{ project.status === "developing" ? "开发中" : "规划中" }}
                 </span>
               </div>
             </div>
-            <div class="p-6">
+            <div class="p-6 flex-1 flex flex-col">
               <div class="flex items-center justify-between mb-2">
                 <h3 class="text-xl font-semibold dark:text-gray-100">
                   {{ project.title }}
@@ -171,11 +115,11 @@ const handleTabChange = async () => {
                 <span
                   class="text-sm px-2 py-1 rounded"
                   :class="{
-                    'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100':
+                    'bg-green-100/80 text-green-800 dark:bg-green-900/80 dark:text-green-100':
                       project.status === 'completed',
-                    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100':
+                    'bg-yellow-100/80 text-yellow-800 dark:bg-yellow-900/80 dark:text-yellow-100':
                       project.status === 'developing',
-                    'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100':
+                    'bg-gray-100/80 text-gray-800 dark:bg-gray-900/80 dark:text-gray-100':
                       project.status === 'planning',
                   }"
                 >
@@ -188,14 +132,14 @@ const handleTabChange = async () => {
                   }}
                 </span>
               </div>
-              <p class="text-gray-600 dark:text-gray-400 mb-4">
+              <p class="text-gray-600 dark:text-gray-400 mb-4 flex-1">
                 {{ project.description }}
               </p>
               <div class="flex flex-wrap gap-2">
                 <span
                   v-for="tag in project.tags"
                   :key="tag"
-                  class="px-3 py-1 bg-primary-10 dark:bg-primary/10 text-primary dark:text-primary-light rounded-full text-sm"
+                  class="px-3 py-1 bg-primary-10 dark:bg-primary/10 text-primary dark:text-primary-light rounded-full text-sm font-medium hover:scale-105 transition-transform cursor-default"
                 >
                   {{ tag }}
                 </span>
@@ -209,12 +153,13 @@ const handleTabChange = async () => {
           v-show="activeTab === 'tools' && !activeToolId"
           name="list"
           tag="div"
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4"
         >
           <article
-            v-for="tool in tools"
+            v-for="(tool, index) in toolsList"
             :key="tool.id"
-            class="group bg-white dark:bg-gray-800/90 rounded-xl shadow-lg overflow-hidden hover:shadow-xl dark:hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-2 relative dark:border dark:border-gray-700/50 dark:hover:glow-lg dark:hover:border-primary/30"
+            :style="{ transitionDelay: getTransitionDelay(index) }"
+            class="group bg-white dark:bg-gray-800/90 rounded-xl shadow-lg overflow-hidden hover:shadow-xl dark:hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-2 relative dark:border dark:border-gray-700/50 dark:hover:glow-lg dark:hover:border-primary/30 animate-fade-in"
           >
             <!-- 工具卡片悬停效果 -->
             <div
@@ -227,24 +172,24 @@ const handleTabChange = async () => {
                 class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
               />
               <div
-                class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4"
+                class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
               >
                 <button
-                  v-if="tool.status === 'online'"
+                  v-if="tool.status === 'completed'"
                   @click="activeToolId = tool.id"
-                  class="px-6 py-2 bg-white/20 hover:bg-white/30 rounded-full transition-colors text-white"
+                  class="px-8 py-3 bg-white/20 hover:bg-white/30 rounded-full transition-all duration-300 text-white font-medium hover:scale-105 hover:shadow-lg backdrop-blur-sm"
                 >
                   立即使用
                 </button>
                 <span
-                  v-if="tool.status !== 'online'"
-                  class="px-6 py-2 bg-white/20 rounded-full text-white"
+                  v-if="tool.status !== 'completed'"
+                  class="px-8 py-3 bg-white/20 rounded-full text-white backdrop-blur-sm font-medium"
                 >
                   {{ tool.status === "developing" ? "开发中" : "规划中" }}
                 </span>
               </div>
             </div>
-            <div class="p-6">
+            <div class="p-6 flex-1 flex flex-col">
               <div class="flex items-center justify-between mb-2">
                 <h3 class="text-xl font-semibold dark:text-gray-100">
                   {{ tool.title }}
@@ -252,31 +197,31 @@ const handleTabChange = async () => {
                 <span
                   class="text-sm px-2 py-1 rounded"
                   :class="{
-                    'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100':
+                    'bg-green-100/80 text-green-800 dark:bg-green-900/80 dark:text-green-100':
                       tool.status === 'completed',
-                    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100':
+                    'bg-yellow-100/80 text-yellow-800 dark:bg-yellow-900/80 dark:text-yellow-100':
                       tool.status === 'developing',
-                    'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100':
+                    'bg-gray-100/80 text-gray-800 dark:bg-gray-900/80 dark:text-gray-100':
                       tool.status === 'planning',
                   }"
                 >
                   {{
                     tool.status === "completed"
-                      ? "已完成"
+                      ? "已完成完成"
                       : tool.status === "developing"
                         ? "开发中"
                         : "规划中"
                   }}
                 </span>
               </div>
-              <p class="text-gray-600 dark:text-gray-400 mb-4">
+              <p class="text-gray-600 dark:text-gray-400 mb-4 flex-1">
                 {{ tool.description }}
               </p>
               <div class="flex flex-wrap gap-2">
                 <span
                   v-for="tag in tool.tags"
                   :key="tag"
-                  class="px-3 py-1 bg-primary-10 dark:bg-primary/10 text-primary dark:text-primary-light rounded-full text-sm"
+                  class="px-3 py-1 bg-primary-10 dark:bg-primary/10 text-primary dark:text-primary-light rounded-full text-sm font-medium hover:scale-105 transition-transform cursor-default"
                 >
                   {{ tag }}
                 </span>
@@ -286,22 +231,29 @@ const handleTabChange = async () => {
         </TransitionGroup>
 
         <!-- 网址导航 -->
-        <div v-show="activeTab === 'bookmarks'">
+        <div
+          v-show="activeTab === 'bookmarks'"
+          class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 animate-fade-in"
+        >
           <BookmarksView />
         </div>
 
         <!-- 工具详情页 -->
-        <div v-if="activeTab === 'tools' && activeToolId" class="relative">
+        <div
+          v-if="activeTab === 'tools' && activeToolId"
+          class="relative bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 animate-fade-in"
+        >
           <button
             @click="showToolList"
-            class="absolute -top-16 left-0 px-4 py-2 flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light transition-colors"
+            class="absolute -top-14 left-0 px-4 py-2 flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light transition-all duration-300 hover:-translate-x-2 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg"
           >
-            <span class="text-xl">←</span>
+            <span class="text-xl leading-none">←</span>
             <span>返回工具列表</span>
           </button>
           <component
             v-if="activeTool?.component"
             :is="activeTool.component"
+            class="animate-slide-up"
           ></component>
         </div>
       </template>
@@ -314,17 +266,67 @@ const handleTabChange = async () => {
 .list-move,
 .list-enter-active,
 .list-leave-active {
-  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .list-enter-from,
 .list-leave-to {
   opacity: 0;
-  transform: scale(0.95) translateY(30px);
+  transform: scale(0.9) translateY(50px);
 }
 
 .list-leave-active {
   position: absolute;
+}
+
+/* 渐入动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 向上滑入动画 */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 渐变动画 */
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient 6s ease infinite;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out forwards;
 }
 
 /* 加载动画 */
@@ -351,7 +353,51 @@ const handleTabChange = async () => {
 /* 暗色模式特效 */
 @media (prefers-color-scheme: dark) {
   .dark\:hover\:glow-lg:hover {
-    box-shadow: 0 0 20px var(--color-primary);
+    box-shadow: 0 0 30px var(--color-primary);
+    transform: translateY(-0.5rem) scale(1.01);
+  }
+}
+
+/* 背景渐变 */
+.container {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-50/10) 0%,
+    transparent 100%
+  );
+}
+
+/* 卡片悬停效果增强 */
+.group:hover {
+  transform: translateY(-0.5rem) scale(1.01);
+  z-index: 1;
+}
+
+/* 标签页切换动画 */
+.tab-enter-active,
+.tab-leave-active {
+  transition: all 0.5s ease-in-out;
+}
+
+.tab-enter-from,
+.tab-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* 加载动画优化 */
+.loader {
+  box-shadow: 0 0 15px var(--color-primary/30);
+}
+
+/* 暗色模式优化 */
+@media (prefers-color-scheme: dark) {
+  .container {
+    background: linear-gradient(
+      135deg,
+      var(--color-primary-900/10) 0%,
+      transparent 100%
+    );
   }
 }
 </style>

@@ -25,22 +25,20 @@ const switchTab = (tabId: string) => {
 </script>
 
 <template>
-  <div class="border-b border-gray-200 dark:border-gray-700">
-    <nav class="flex space-x-8" aria-label="Tabs">
-      <button
-        v-for="tab in tabs"
-        :key="tab.id"
-        @click="switchTab(tab.id)"
-        class="py-4 px-1 inline-flex items-center gap-2 border-b-2 font-medium text-sm transition-colors whitespace-nowrap"
-        :class="[
-          activeTab === tab.id
-            ? 'border-primary text-primary'
-            : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600',
-        ]"
-      >
-        <span v-if="tab.icon" class="text-lg">{{ tab.icon }}</span>
-        {{ tab.label }}
-      </button>
-    </nav>
+  <div class="flex" :class="$attrs.class">
+    <button
+      v-for="tab in tabs"
+      :key="tab.id"
+      @click="$emit('update:modelValue', tab.id)"
+      class="flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 min-w-[120px] justify-center"
+      :class="[
+        modelValue === tab.id
+          ? 'bg-white dark:bg-gray-800 shadow-md text-primary dark:text-primary-light'
+          : 'text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light',
+      ]"
+    >
+      <span class="text-lg">{{ tab.icon }}</span>
+      <span>{{ tab.label }}</span>
+    </button>
   </div>
 </template>
