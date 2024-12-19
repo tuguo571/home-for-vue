@@ -106,7 +106,11 @@ const formatDate = (date: Date, format: string) => {
 };
 
 // 计算属性
-const currentTimestamp = computed(() => Math.floor(Date.now() / 1000));
+const currentTimestamp = ref<number>(Math.floor(Date.now() / 1000));
+
+const updateTimestamp = () => {
+  currentTimestamp.value = Math.floor(Date.now() / 1000);
+};
 </script>
 
 <template>

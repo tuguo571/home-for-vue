@@ -7,6 +7,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "isolatedModules": true,
+    "skipLibCheck": true
   }
 }

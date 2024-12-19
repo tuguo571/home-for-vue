@@ -1,5 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
-import type { RouteRecordRaw } from "vue-router";
+import type { RouteRecordRaw, RouteMeta } from "vue-router";
+
+declare module "vue-router" {
+  interface RouteMeta {
+    title: string;
+    transition?: string;
+  }
+}
 
 const routes: RouteRecordRaw[] = [
   {
@@ -21,37 +28,11 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
-    path: "/skills",
-    name: "Skills",
-    component: () => import("@/views/SkillsView.vue"),
-    meta: {
-      title: "技能",
-      transition: "slide-right",
-    },
-  },
-  {
-    path: "/blog",
-    name: "Blog",
-    component: () => import("@/views/BlogView.vue"),
-    meta: {
-      title: "博客",
-      transition: "slide-left",
-    },
-  },
-  {
-    path: "/contact",
-    name: "Contact",
-    component: () => import("@/views/ContactView.vue"),
-    meta: {
-      title: "联系",
-      transition: "scale",
-    },
-  },
-  {
-    path: "/projects",
+    path: "/tools",
+    name: "Tools",
     component: () => import("@/views/ToolsView.vue"),
     meta: {
-      title: "项目",
+      title: "工具箱",
       transition: "fade",
     },
     children: [
@@ -83,6 +64,33 @@ const routes: RouteRecordRaw[] = [
         },
       },
     ],
+  },
+  {
+    path: "/skills",
+    name: "Skills",
+    component: () => import("@/views/SkillsView.vue"),
+    meta: {
+      title: "技能",
+      transition: "slide-right",
+    },
+  },
+  {
+    path: "/blog",
+    name: "Blog",
+    component: () => import("@/views/BlogView.vue"),
+    meta: {
+      title: "博客",
+      transition: "slide-left",
+    },
+  },
+  {
+    path: "/contact",
+    name: "Contact",
+    component: () => import("@/views/ContactView.vue"),
+    meta: {
+      title: "联系",
+      transition: "scale",
+    },
   },
 ];
 
