@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import emailjs from "@emailjs/browser";
 
 interface FormData {
   name: string;
@@ -23,10 +24,8 @@ const validateEmail = (email: string) => {
 };
 
 const handleSubmit = async () => {
-  // 重置状态
   submitStatus.value = null;
 
-  // 表单验证
   if (!formData.value.name.trim()) {
     alert("请输入您的姓名");
     return;
@@ -42,22 +41,57 @@ const handleSubmit = async () => {
 
   try {
     isSubmitting.value = true;
-    // 这里添加实际的表单提交逻辑
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // 模拟请求
+
+    console.log("开始发送邮件...", {
+      serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID,
+      templateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+      publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+      data: {
+        from_name: formData.value.name,
+        from_email: formData.value.email,
+        subject: formData.value.subject,
+        message: formData.value.message,
+        reply_to: formData.value.email,
+      },
+    });
+
+    const result = await emailjs.send(
+      import.meta.env.VITE_EMAILJS_SERVICE_ID,
+      import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+      {
+        from_name: formData.value.name,
+        from_email: formData.value.email,
+        subject: formData.value.subject,
+        message: formData.value.message,
+        reply_to: formData.value.email,
+      },
+      import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+    );
+
+    console.log("邮件发送结果:", result);
     submitStatus.value = "success";
-    // 清空表单
     formData.value = {
       name: "",
       email: "",
       subject: "",
       message: "",
     };
-  } catch (error) {
+  } catch (error: any) {
     submitStatus.value = "error";
-    console.error("提交失败:", error);
+    console.error("邮件发送失败:", {
+      error,
+      message: error.message,
+      text: error.text,
+    });
+    alert(`发送失败: ${error.message || "请稍后重试"}`);
   } finally {
     isSubmitting.value = false;
   }
+};
+
+// 添加跳转函数
+const goToGuestbook = () => {
+  window.open(import.meta.env.VITE_GUESTBOOK_URL, "_blank");
 };
 </script>
 
@@ -65,11 +99,40 @@ const handleSubmit = async () => {
   <div class="container mx-auto px-4 py-12">
     <div class="max-w-2xl mx-auto">
       <h1 class="text-4xl font-bold text-center mb-8">联系我</h1>
-      <p class="text-gray-600 dark:text-gray-300 text-center mb-12">
+      <p class="text-gray-600 dark:text-gray-300 text-center mb-6">
         有任何问题或建议？请随时与我联系。
       </p>
 
-      <form @submit.prevent="handleSubmit" class="space-y-6">
+      <!-- 留言板入口 -->
+      <div class="text-center mb-12">
+        <p class="text-gray-600 dark:text-gray-300 mb-4">
+          您也可以在留言板上留下您的想法
+        </p>
+        <button
+          @click="goToGuestbook"
+          class="inline-flex items-center px-6 py-2.5 border border-transparent text-base font-medium rounded-full text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 ease-in-out transform hover:scale-105"
+        >
+          <span class="mr-2">前往留言板</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <!-- 表单部分 -->
+      <form
+        @submit.prevent="handleSubmit"
+        class="space-y-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8"
+      >
         <!-- 姓名 -->
         <div>
           <label
@@ -142,15 +205,15 @@ const handleSubmit = async () => {
         </div>
 
         <!-- 提交按钮 -->
-        <div class="flex justify-center">
+        <div class="flex justify-center pt-4">
           <button
             type="submit"
-            class="btn-primary min-w-[120px]"
+            class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-full text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             :disabled="isSubmitting"
           >
             <span v-if="isSubmitting" class="flex items-center">
               <svg
-                class="animate-spin -ml-1 mr-2 h-4 w-4"
+                class="animate-spin -ml-1 mr-2 h-5 w-5"
                 fill="none"
                 viewBox="0 0 24 24"
               >
@@ -168,9 +231,21 @@ const handleSubmit = async () => {
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 ></path>
               </svg>
-              提交中...
+              正在发送...
             </span>
-            <span v-else>发送消息</span>
+            <span v-else class="flex items-center">
+              发送消息
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 ml-2"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"
+                />
+              </svg>
+            </span>
           </button>
         </div>
 
@@ -185,19 +260,47 @@ const handleSubmit = async () => {
         >
           <div
             v-if="submitStatus"
-            class="text-center py-2 px-4 rounded-lg"
+            class="text-center py-3 px-6 rounded-lg mt-6"
             :class="{
-              'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100':
+              'bg-green-50 text-green-800 dark:bg-green-900/50 dark:text-green-100':
                 submitStatus === 'success',
-              'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100':
+              'bg-red-50 text-red-800 dark:bg-red-900/50 dark:text-red-100':
                 submitStatus === 'error',
             }"
           >
-            {{
-              submitStatus === "success"
-                ? "消息已发送，感谢您的反馈！"
-                : "发送失败，请稍后重试。"
-            }}
+            <div
+              class="flex items-center justify-center"
+              v-if="submitStatus === 'success'"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 mr-2 text-green-500"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <span>消息已发送，感谢您的反馈！我们将尽快与您联系。</span>
+            </div>
+            <div class="flex items-center justify-center" v-else>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 mr-2 text-red-500"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <span>发送失败，请稍后重试。</span>
+            </div>
           </div>
         </transition>
       </form>
