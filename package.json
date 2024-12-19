@@ -15,6 +15,7 @@
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
     "pinia": "^2.1.7",
+    "rss-parser": "^3.13.0",
     "vue": "^3.4.3",
     "vue-router": "^4.2.5"
   },

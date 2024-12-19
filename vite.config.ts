@@ -7,6 +7,7 @@ import {
   generateRobots,
   siteConfig,
 } from "./src/config";
+import { fileURLToPath, URL } from "node:url";
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
@@ -57,7 +58,19 @@ export default defineConfig(({ mode }) => {
     ],
     resolve: {
       alias: {
-        "@": path.resolve(__dirname, "./src"),
+        "@": fileURLToPath(new URL("./src", import.meta.url)),
+      },
+    },
+    server: {
+      proxy: {
+        "/rss.xml": {
+          target: "https://www.mmm.sd",
+          changeOrigin: true,
+          headers: {
+            Accept: "application/xml, text/xml, */*",
+            Referer: "https://www.mmm.sd",
+          },
+        },
       },
     },
   };
