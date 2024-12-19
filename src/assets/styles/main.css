@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #3b82f6;
+  --color-primary-90: #3b82f6e6;
+  --color-primary-10: #3b82f61a;
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-block px-6 py-3 bg-primary text-white rounded-lg
+      hover:bg-primary-90 transition-colors duration-300;
+  }
+
+  .btn-secondary {
+    @apply inline-block px-6 py-3 border-2 border-primary text-primary rounded-lg
+      hover:bg-primary hover:text-white transition-colors duration-300;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    sans-serif;
+}

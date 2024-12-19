@@ -1,23 +1,105 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import { createRouter, createWebHistory } from "vue-router";
+import type { RouteRecordRaw } from "vue-router";
+
+const routes: RouteRecordRaw[] = [
+  {
+    path: "/",
+    name: "Home",
+    component: () => import("@/views/HomeView.vue"),
+    meta: {
+      title: "首页",
+      transition: "scale",
+    },
+  },
+  {
+    path: "/projects",
+    name: "Projects",
+    component: () => import("@/views/ProjectsView.vue"),
+    meta: {
+      title: "项目",
+      transition: "slide-left",
+    },
+  },
+  {
+    path: "/skills",
+    name: "Skills",
+    component: () => import("@/views/SkillsView.vue"),
+    meta: {
+      title: "技能",
+      transition: "slide-right",
+    },
+  },
+  {
+    path: "/blog",
+    name: "Blog",
+    component: () => import("@/views/BlogView.vue"),
+    meta: {
+      title: "博客",
+      transition: "slide-left",
+    },
+  },
+  {
+    path: "/contact",
+    name: "Contact",
+    component: () => import("@/views/ContactView.vue"),
+    meta: {
+      title: "联系",
+      transition: "scale",
+    },
+  },
+  {
+    path: "/projects",
+    component: () => import("@/views/ToolsView.vue"),
+    meta: {
+      title: "项目",
+      transition: "fade",
+    },
+    children: [
+      {
+        path: "json",
+        name: "JsonFormatter",
+        component: () => import("@/views/tools/JsonFormatterView.vue"),
+        meta: {
+          title: "JSON 格式化",
+          transition: "fade",
+        },
+      },
+      {
+        path: "bookmarks",
+        name: "Bookmarks",
+        component: () => import("@/views/tools/BookmarksView.vue"),
+        meta: {
+          title: "网址导航",
+          transition: "fade",
+        },
+      },
+      {
+        path: "timestamp",
+        name: "Timestamp",
+        component: () => import("@/views/tools/TimestampView.vue"),
+        meta: {
+          title: "时间戳转换",
+          transition: "fade",
+        },
+      },
+    ],
+  },
+];
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: HomeView,
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
-    },
-  ],
-})
+  history: createWebHistory(),
+  routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    }
+    return { top: 0 };
+  },
+});
 
-export default router
+router.beforeEach((to, from, next) => {
+  document.title = `${to.meta.title} | Handsome`;
+  next();
+});
+
+export default router;
