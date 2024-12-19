@@ -58,11 +58,11 @@ setInterval(() => {
         <div class="mt-20 flex flex-wrap justify-center gap-4">
           <span
             v-for="skill in [
-              'Vue.js',
+              'Java',
               'TypeScript',
-              'Tailwind CSS',
-              'Node.js',
-              'React',
+              'Spring',
+              'Vue',
+              'Docker',
               'Git',
             ]"
             :key="skill"
