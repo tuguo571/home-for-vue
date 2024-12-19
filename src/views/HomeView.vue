@@ -1,13 +1,33 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import PageTransition from "@/components/PageTransition.vue";
+import { config } from "@/config";
+import { siteConfig } from "@/config/site";
 
-const titles = ref(["后端全干工程师", "热爱编程", "热爱生活"]);
+const titles = ref(["Java后端工程师", "热爱编程", "热爱生活"]);
 const currentTitleIndex = ref(0);
 
 setInterval(() => {
   currentTitleIndex.value = (currentTitleIndex.value + 1) % titles.value.length;
 }, 3000);
+
+// 结构化数据
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: siteConfig.name,
+  url: config.siteUrl,
+  jobTitle: siteConfig.title,
+  description: siteConfig.siteDescription,
+};
+
+// 在组件挂载时添加结构化数据
+onMounted(() => {
+  const script = document.createElement("script");
+  script.setAttribute("type", "application/ld+json");
+  script.textContent = JSON.stringify(structuredData);
+  document.head.appendChild(script);
+});
 </script>
 
 <template>
@@ -18,7 +38,7 @@ setInterval(() => {
         <PageTransition name="bounce">
           <h1 class="text-4xl md:text-6xl font-bold mb-6">
             <span class="block mb-4">你好 👋</span>
-            <span class="block">我是 Handsome</span>
+            <span class="block">我是 {{ siteConfig.name }}</span>
           </h1>
         </PageTransition>
 
@@ -35,9 +55,7 @@ setInterval(() => {
 
         <PageTransition name="slide-right">
           <p class="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-12">
-            生活原本沉闷，
-            <br class="hidden md:block" />
-            但跑起来就有风。
+            {{ siteConfig.slogan }}
           </p>
         </PageTransition>
 
@@ -57,14 +75,7 @@ setInterval(() => {
       <PageTransition name="scale">
         <div class="mt-20 flex flex-wrap justify-center gap-4">
           <span
-            v-for="skill in [
-              'Java',
-              'TypeScript',
-              'Spring',
-              'Vue',
-              'Docker',
-              'Git',
-            ]"
+            v-for="skill in siteConfig.skills"
             :key="skill"
             class="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-full text-sm hover:scale-110 hover:bg-primary hover:text-white dark:hover:bg-primary transition-all duration-300"
           >

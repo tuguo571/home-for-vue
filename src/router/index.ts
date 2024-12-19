@@ -14,8 +14,9 @@ const routes: RouteRecordRaw[] = [
     name: "Home",
     component: () => import("@/views/HomeView.vue"),
     meta: {
-      title: "首页",
-      transition: "scale",
+      title: "个人作品集 | 首页",
+      description: "Java后端开发工程师的个人作品集展示",
+      keywords: "Java,Spring Boot,后端开发,个人作品集",
     },
   },
   {
@@ -79,8 +80,9 @@ const routes: RouteRecordRaw[] = [
     name: "Blog",
     component: () => import("@/views/BlogView.vue"),
     meta: {
-      title: "博客",
-      transition: "slide-left",
+      title: "技术博客 | 个人作品集",
+      description: "分享Java后端开发技术文章和经验",
+      keywords: "Java博客,技术文章,Spring Boot教程,后端开发笔记",
     },
   },
   {
