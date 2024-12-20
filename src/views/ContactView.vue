@@ -98,7 +98,11 @@ const goToGuestbook = () => {
 <template>
   <div class="container mx-auto px-4 py-12">
     <div class="max-w-2xl mx-auto">
-      <h1 class="text-4xl font-bold text-center mb-8">联系我</h1>
+      <h1
+        class="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-gradient"
+      >
+        联系我
+      </h1>
       <p class="text-gray-600 dark:text-gray-300 text-center mb-6">
         有任何问题或建议？请随时与我联系。
       </p>
@@ -110,7 +114,7 @@ const goToGuestbook = () => {
         </p>
         <button
           @click="goToGuestbook"
-          class="inline-flex items-center px-6 py-2.5 border border-transparent text-base font-medium rounded-full text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 ease-in-out transform hover:scale-105"
+          class="inline-flex items-center px-6 py-2.5 border border-transparent text-base font-medium rounded-full text-white bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 ease-in-out transform hover:scale-105"
         >
           <span class="mr-2">前往留言板</span>
           <svg
@@ -131,7 +135,7 @@ const goToGuestbook = () => {
       <!-- 表单部分 -->
       <form
         @submit.prevent="handleSubmit"
-        class="space-y-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8"
+        class="space-y-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8"
       >
         <!-- 姓名 -->
         <div>
@@ -208,7 +212,7 @@ const goToGuestbook = () => {
         <div class="flex justify-center pt-4">
           <button
             type="submit"
-            class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-full text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-full text-white bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             :disabled="isSubmitting"
           >
             <span v-if="isSubmitting" class="flex items-center">
@@ -307,3 +311,22 @@ const goToGuestbook = () => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.animate-gradient {
+  background-size: 200% auto;
+  animation: gradient 4s linear infinite;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+</style>

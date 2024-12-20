@@ -81,9 +81,9 @@ function formatDate(date: Date): string {
       <PageTransition>
         <div class="text-center mb-12">
           <h1
-            class="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent"
+            class="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-gradient"
           >
-            技术博客
+            博客文章
           </h1>
           <p class="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto">
             分享技术见解和学习心得，记录编程之路的点点滴滴
@@ -91,7 +91,7 @@ function formatDate(date: Date): string {
         </div>
       </PageTransition>
 
-      <!-- 加载状�� -->
+      <!-- 加载状态 -->
       <div v-if="loading" class="flex justify-center items-center py-20">
         <div
           class="animate-spin rounded-full h-16 w-16 border-4 border-primary border-t-transparent"
@@ -123,11 +123,13 @@ function formatDate(date: Date): string {
             name="fade"
             class="h-full"
           >
-            <article class="card bg-main hover:border-primary/20">
+            <article
+              class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden"
+            >
               <div class="p-6 flex-1">
                 <div class="flex items-center mb-4 space-x-2">
                   <span
-                    class="px-3 py-1 text-sm rounded-full bg-primary/10 text-primary font-medium"
+                    class="px-3 py-1 text-sm rounded-full bg-blue-50 dark:bg-blue-900/50 text-blue-500 dark:text-blue-300"
                   >
                     {{ post.category }}
                   </span>
@@ -289,5 +291,22 @@ function formatDate(date: Date): string {
 
 .bg-primary-10 {
   background-color: rgba(59, 130, 246, 0.1);
+}
+
+.animate-gradient {
+  background-size: 200% auto;
+  animation: gradient 4s linear infinite;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 </style>

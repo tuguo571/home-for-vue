@@ -37,22 +37,18 @@ const getTransitionDelay = (index: number) => `${index * 100}ms`;
 
 <template>
   <div class="container mx-auto px-4 py-12">
-    <PageTransition name="bounce">
-      <div class="max-w-4xl mx-auto text-center mb-8">
-        <h1
-          class="text-5xl font-bold mb-4 text-gray-900 dark:text-white tracking-tight"
-        >
-          工具集
-        </h1>
-      </div>
-    </PageTransition>
+    <h1
+      class="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-gradient"
+    >
+      工具集
+    </h1>
 
     <div class="max-w-6xl mx-auto">
       <div class="mb-8">
         <Tabs
           v-model="activeTab"
           :tabs="tabs"
-          class="justify-center max-w-md mx-auto bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-full p-2 shadow-lg flex items-center gap-2"
+          class="justify-center max-w-md mx-auto bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-full p-2 shadow-sm flex items-center gap-2"
           @update:modelValue="handleTabChange"
         />
       </div>
@@ -153,13 +149,13 @@ const getTransitionDelay = (index: number) => `${index * 100}ms`;
           v-show="activeTab === 'tools' && !activeToolId"
           name="list"
           tag="div"
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
         >
           <article
             v-for="(tool, index) in toolsList"
             :key="tool.id"
             :style="{ transitionDelay: getTransitionDelay(index) }"
-            class="group bg-white dark:bg-gray-800/90 rounded-xl shadow-lg overflow-hidden hover:shadow-xl dark:hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-2 relative dark:border dark:border-gray-700/50 dark:hover:glow-lg dark:hover:border-primary/30 animate-fade-in"
+            class="group bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 dark:border-gray-700/50"
           >
             <!-- 工具卡片悬停效果 -->
             <div
@@ -221,7 +217,7 @@ const getTransitionDelay = (index: number) => `${index * 100}ms`;
                 <span
                   v-for="tag in tool.tags"
                   :key="tag"
-                  class="px-3 py-1 bg-primary-10 dark:bg-primary/10 text-primary dark:text-primary-light rounded-full text-sm font-medium hover:scale-105 transition-transform cursor-default"
+                  class="px-3 py-1 text-xs rounded-full bg-gray-50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 shadow-sm hover:shadow hover:scale-105 hover:bg-primary hover:text-white dark:hover:bg-primary transition-all duration-300 cursor-default border border-gray-100 dark:border-gray-700/50"
                 >
                   {{ tag }}
                 </span>
@@ -233,7 +229,7 @@ const getTransitionDelay = (index: number) => `${index * 100}ms`;
         <!-- 网址导航 -->
         <div
           v-show="activeTab === 'bookmarks'"
-          class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 animate-fade-in"
+          class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 animate-fade-in border border-gray-100 dark:border-gray-700"
         >
           <BookmarksView />
         </div>
@@ -241,7 +237,7 @@ const getTransitionDelay = (index: number) => `${index * 100}ms`;
         <!-- 工具详情页 -->
         <div
           v-if="activeTab === 'tools' && activeToolId"
-          class="relative bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 animate-fade-in"
+          class="relative bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 animate-fade-in border border-gray-100 dark:border-gray-700"
         >
           <button
             @click="showToolList"
@@ -317,8 +313,8 @@ const getTransitionDelay = (index: number) => `${index * 100}ms`;
 }
 
 .animate-gradient {
-  background-size: 200% 200%;
-  animation: gradient 6s ease infinite;
+  background-size: 200% auto;
+  animation: gradient 4s linear infinite;
 }
 
 .animate-fade-in {
@@ -390,7 +386,7 @@ const getTransitionDelay = (index: number) => `${index * 100}ms`;
   box-shadow: 0 0 15px var(--color-primary/30);
 }
 
-/* 暗色模式优化 */
+/* 暗色模���优化 */
 @media (prefers-color-scheme: dark) {
   .container {
     background: linear-gradient(
