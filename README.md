@@ -159,4 +159,8 @@ MIT License
 
 ## 推荐服务商
 
-[Rainyun](https://www.rainyun.com/handsome_/) 提供 CDN 加速 / 云存储服务
+<a href="https://www.rainyun.com/handsome_" target="_blank">
+  <img src="https://app.rainyun.com/img/icons/apple-touch-icon-152x152.png" alt="Rainyun Logo" width="20" height="20" style="vertical-align: middle;" />
+  Rainyun
+</a>
+提供 CDN 加速 / 云存储服务

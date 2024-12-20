@@ -48,7 +48,7 @@ const handleNoticeAction = (button: NoticeButton) => {
   const now = Date.now();
   const showAfter = button.showAfter ?? noticeConfig.defaultShowAfter;
 
-  // 设置下次显示��间
+  // 设置下次显示间
   if (showAfter !== undefined) {
     localStorage.setItem(
       `notice_${noticeConfig.id}`,
@@ -101,7 +101,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col min-h-screen bg-main text-primary">
+  <div class="min-h-screen flex flex-col">
     <TheHeader />
     <main class="flex-grow pt-16 md:pt-20">
       <router-view v-slot="{ Component }">
