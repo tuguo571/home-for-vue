@@ -64,12 +64,12 @@ const toggleMenu = () => {
       <div class="flex items-center justify-between">
         <router-link to="/" class="logo-link group relative overflow-hidden">
           <span
-            class="text-2xl font-bold bg-gradient-to-r from-blue-600 via-primary to-indigo-500 bg-clip-text text-transparent"
+            class="text-2xl font-bold bg-gradient-to-r from-[#12c2e9] via-[#c471ed] to-[#f64f59] bg-clip-text text-transparent bg-[length:200%_auto] hover:animate-gradient"
           >
             Handsome
           </span>
           <span
-            class="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-blue-600 via-primary to-indigo-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
+            class="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-[#12c2e9] via-[#c471ed] to-[#f64f59] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
           ></span>
         </router-link>
 
@@ -174,10 +174,9 @@ const toggleMenu = () => {
 
 .logo-link:hover span:first-child {
   @apply transform scale-105 transition-transform duration-300;
-  animation: shine 2s infinite;
 }
 
-@keyframes shine {
+@keyframes gradient {
   0% {
     background-position: 0% 50%;
   }
@@ -189,7 +188,7 @@ const toggleMenu = () => {
   }
 }
 
-.logo-link span:first-child {
-  @apply bg-[length:200%_auto];
+.hover\:animate-gradient:hover {
+  animation: gradient 3s linear infinite;
 }
 </style>
