@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import emailjs from "@emailjs/browser";
+import { emailConfig } from "@/config/email";
 
 interface FormData {
   name: string;
@@ -43,9 +44,9 @@ const handleSubmit = async () => {
     isSubmitting.value = true;
 
     console.log("开始发送邮件...", {
-      serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID,
-      templateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-      publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+      serviceId: emailConfig.serviceId,
+      templateId: emailConfig.templateId,
+      publicKey: emailConfig.publicKey,
       data: {
         from_name: formData.value.name,
         from_email: formData.value.email,
@@ -56,8 +57,8 @@ const handleSubmit = async () => {
     });
 
     const result = await emailjs.send(
-      import.meta.env.VITE_EMAILJS_SERVICE_ID,
-      import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+      emailConfig.serviceId,
+      emailConfig.templateId,
       {
         from_name: formData.value.name,
         from_email: formData.value.email,
@@ -65,7 +66,7 @@ const handleSubmit = async () => {
         message: formData.value.message,
         reply_to: formData.value.email,
       },
-      import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+      emailConfig.publicKey,
     );
 
     console.log("邮件发送结果:", result);
