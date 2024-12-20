@@ -62,7 +62,16 @@ const toggleMenu = () => {
   >
     <nav class="container mx-auto px-4 py-4">
       <div class="flex items-center justify-between">
-        <router-link to="/" class="text-2xl font-bold"> Handsome </router-link>
+        <router-link to="/" class="logo-link group relative overflow-hidden">
+          <span
+            class="text-2xl font-bold bg-gradient-to-r from-blue-600 via-primary to-indigo-500 bg-clip-text text-transparent"
+          >
+            Handsome
+          </span>
+          <span
+            class="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-blue-600 via-primary to-indigo-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
+          ></span>
+        </router-link>
 
         <!-- 桌面端导航 -->
         <div class="hidden md:flex items-center space-x-6">
@@ -156,5 +165,31 @@ const toggleMenu = () => {
   .mobile-menu .router-link-active {
     @apply bg-primary-10 text-primary;
   }
+}
+
+/* Logo 悬停动画 */
+.logo-link {
+  @apply inline-block py-1;
+}
+
+.logo-link:hover span:first-child {
+  @apply transform scale-105 transition-transform duration-300;
+  animation: shine 2s infinite;
+}
+
+@keyframes shine {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.logo-link span:first-child {
+  @apply bg-[length:200%_auto];
 }
 </style>
