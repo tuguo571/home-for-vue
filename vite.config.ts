@@ -9,15 +9,13 @@ export default defineConfig({
   build: {
     outDir: "dist",
     assetsDir: "assets",
-    minify: "terser",
+    minify: "esbuild",
     sourcemap: false,
     chunkSizeWarningLimit: 1500,
     rollupOptions: {
       output: {
         manualChunks: {
           vendor: ["vue", "vue-router"],
-          utils: ["./src/utils"],
-          components: ["./src/components"],
         },
         chunkFileNames: "assets/js/[name]-[hash].js",
         entryFileNames: "assets/js/[name]-[hash].js",
@@ -58,29 +56,22 @@ export default defineConfig({
         ],
       },
       png: {
-        // sharp options
         quality: 80,
       },
       jpeg: {
-        // sharp options
         quality: 80,
       },
       jpg: {
-        // sharp options
         quality: 80,
       },
       tiff: {
-        // sharp options
         quality: 80,
       },
-      // gif uses gifsicle
       gif: undefined,
       webp: {
-        // sharp options
         quality: 80,
       },
       avif: {
-        // sharp options
         quality: 80,
       },
     }),

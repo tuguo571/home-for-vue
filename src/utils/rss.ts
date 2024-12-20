@@ -1,4 +1,5 @@
 import type { BlogPost } from "../types/blog";
+import { rssConfig } from "@/config/rss";
 
 // 从 XML 元素获取文本内容
 function getElementText(element: Element | null): string {
@@ -10,7 +11,7 @@ function getElementText(element: Element | null): string {
 // 获取博客文章列表
 export async function fetchBlogPosts(): Promise<BlogPost[]> {
   try {
-    const response = await fetch("/rss.xml", {
+    const response = await fetch(rssConfig.url, {
       headers: {
         Accept: "application/xml, text/xml, */*",
         "User-Agent": "Mozilla/5.0",

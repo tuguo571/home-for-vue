@@ -12,6 +12,9 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
-    }
+    },
+    "moduleResolution": "node",
+    "allowJs": true,
+    "resolveJsonModule": true
   }
 }
