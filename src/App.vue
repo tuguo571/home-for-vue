@@ -41,7 +41,7 @@ watch(
 <template>
   <div class="flex flex-col min-h-screen bg-main text-primary">
     <TheHeader />
-    <main class="flex-grow pt-20">
+    <main class="flex-grow pt-16 md:pt-20">
       <router-view v-slot="{ Component }">
         <PageTransition :name="route.meta.transition || 'fade'">
           <component :is="Component" />

@@ -6,6 +6,7 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
   }
 
   body {
@@ -15,6 +16,20 @@
       system-ui,
       -apple-system,
       sans-serif;
+  }
+
+  /* 移动端优化 */
+  @media (max-width: 768px) {
+    html {
+      font-size: 14px;
+    }
+  }
+
+  /* 移动端点击态优化 */
+  @media (hover: none) {
+    .hover\:scale-105:active {
+      transform: scale(1.02);
+    }
   }
 }
 
@@ -33,4 +48,10 @@
     @apply bg-main border border-light rounded-2xl shadow-sm
       hover:shadow-md transition-all duration-300;
   }
+}
+
+/* 移动端滚动优化 */
+.smooth-scroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
 }

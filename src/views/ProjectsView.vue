@@ -36,27 +36,31 @@ const getTransitionDelay = (index: number) => `${index * 100}ms`;
 </script>
 
 <template>
-  <div class="container mx-auto px-4 py-12">
+  <div class="container mx-auto px-4 py-8 md:py-12">
     <h1
-      class="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-gradient"
+      class="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-8 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-gradient"
     >
       工具集
     </h1>
 
     <div class="max-w-6xl mx-auto">
-      <div class="mb-8">
+      <!-- 标签页切换 -->
+      <div class="mb-6 md:mb-8">
         <Tabs
           v-model="activeTab"
           :tabs="tabs"
-          class="justify-center max-w-md mx-auto bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-full p-2 shadow-sm flex items-center gap-2"
+          class="justify-center max-w-md mx-auto bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-full p-1.5 md:p-2 shadow-sm flex items-center gap-1.5 md:gap-2 text-sm md:text-base"
           @update:modelValue="handleTabChange"
         />
       </div>
 
       <!-- 加载状态 -->
-      <div v-if="isLoading" class="flex items-center justify-center py-12">
+      <div
+        v-if="isLoading"
+        class="flex items-center justify-center py-8 md:py-12"
+      >
         <div
-          class="loader dark:border-t-gray-700 dark:border-r-gray-700 dark:border-l-gray-700 animate-pulse"
+          class="loader dark:border-t-gray-700 dark:border-r-gray-700 dark:border-l-gray-700 w-10 h-10 md:w-12 md:h-12"
         ></div>
       </div>
 
@@ -149,7 +153,7 @@ const getTransitionDelay = (index: number) => `${index * 100}ms`;
           v-show="activeTab === 'tools' && !activeToolId"
           name="list"
           tag="div"
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4"
         >
           <article
             v-for="(tool, index) in toolsList"
@@ -157,41 +161,40 @@ const getTransitionDelay = (index: number) => `${index * 100}ms`;
             :style="{ transitionDelay: getTransitionDelay(index) }"
             class="group bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 dark:border-gray-700/50"
           >
-            <!-- 工具卡片悬停效果 -->
-            <div
-              class="absolute inset-0 bg-primary/5 dark:bg-primary/10 opacity-0 group-hover:opacity-100 transition-all duration-300 dark:group-hover:backdrop-blur-sm"
-            ></div>
-            <div class="relative h-48 overflow-hidden">
+            <div class="relative h-40 md:h-48 overflow-hidden rounded-t-lg">
               <img
                 :src="tool.image"
                 :alt="tool.title"
-                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
               <div
-                class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
+                class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
               >
                 <button
                   v-if="tool.status === 'completed'"
                   @click="activeToolId = tool.id"
-                  class="px-8 py-3 bg-white/20 hover:bg-white/30 rounded-full transition-all duration-300 text-white font-medium hover:scale-105 hover:shadow-lg backdrop-blur-sm"
+                  class="px-6 py-2 md:px-8 md:py-3 bg-white/20 hover:bg-white/30 rounded-full transition-all duration-300 text-white text-sm md:text-base font-medium hover:scale-105 hover:shadow-lg backdrop-blur-sm"
                 >
                   立即使用
                 </button>
                 <span
-                  v-if="tool.status !== 'completed'"
-                  class="px-8 py-3 bg-white/20 rounded-full text-white backdrop-blur-sm font-medium"
+                  v-else
+                  class="px-6 py-2 md:px-8 md:py-3 bg-white/20 rounded-full text-white backdrop-blur-sm text-sm md:text-base font-medium"
                 >
                   {{ tool.status === "developing" ? "开发中" : "规划中" }}
                 </span>
               </div>
             </div>
-            <div class="p-6 flex-1 flex flex-col">
+
+            <div class="p-4 md:p-5">
               <div class="flex items-center justify-between mb-2">
-                <h3 class="text-xl font-semibold dark:text-gray-100">
+                <h3
+                  class="text-base md:text-lg font-medium text-gray-800 dark:text-gray-200"
+                >
                   {{ tool.title }}
                 </h3>
                 <span
-                  class="text-sm px-2 py-1 rounded"
+                  class="text-xs md:text-sm px-2 py-1 rounded"
                   :class="{
                     'bg-green-100/80 text-green-800 dark:bg-green-900/80 dark:text-green-100':
                       tool.status === 'completed',
@@ -210,14 +213,16 @@ const getTransitionDelay = (index: number) => `${index * 100}ms`;
                   }}
                 </span>
               </div>
-              <p class="text-gray-600 dark:text-gray-400 mb-4 flex-1">
+              <p
+                class="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2"
+              >
                 {{ tool.description }}
               </p>
-              <div class="flex flex-wrap gap-2">
+              <div class="flex flex-wrap gap-1.5">
                 <span
                   v-for="tag in tool.tags"
                   :key="tag"
-                  class="px-3 py-1 text-xs rounded-full bg-gray-50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 shadow-sm hover:shadow hover:scale-105 hover:bg-primary hover:text-white dark:hover:bg-primary transition-all duration-300 cursor-default border border-gray-100 dark:border-gray-700/50"
+                  class="px-2 py-1 text-xs rounded-full bg-gray-50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 shadow-sm hover:shadow hover:scale-105 hover:bg-primary hover:text-white dark:hover:bg-primary transition-all duration-300 cursor-default border border-gray-100 dark:border-gray-700/50"
                 >
                   {{ tag }}
                 </span>
@@ -229,7 +234,7 @@ const getTransitionDelay = (index: number) => `${index * 100}ms`;
         <!-- 网址导航 -->
         <div
           v-show="activeTab === 'bookmarks'"
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 animate-fade-in border border-gray-100 dark:border-gray-700"
+          class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 md:p-6 animate-fade-in border border-gray-100 dark:border-gray-700"
         >
           <BookmarksView />
         </div>
@@ -237,15 +242,19 @@ const getTransitionDelay = (index: number) => `${index * 100}ms`;
         <!-- 工具详情页 -->
         <div
           v-if="activeTab === 'tools' && activeToolId"
-          class="relative bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 animate-fade-in border border-gray-100 dark:border-gray-700"
+          class="relative bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 md:p-6 animate-fade-in border border-gray-100 dark:border-gray-700"
         >
-          <button
-            @click="showToolList"
-            class="absolute -top-14 left-0 px-4 py-2 flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light transition-all duration-300 hover:-translate-x-2 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg"
-          >
-            <span class="text-xl leading-none">←</span>
-            <span>返回工具列表</span>
-          </button>
+          <!-- 返回按钮 -->
+          <div class="absolute left-0 transform -translate-y-full mb-2">
+            <button
+              @click="showToolList"
+              class="flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 text-sm md:text-base text-gray-600 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-x-2"
+            >
+              <span class="text-lg md:text-xl leading-none">←</span>
+              <span>返回工具列表</span>
+            </button>
+          </div>
+
           <component
             v-if="activeTool?.component"
             :is="activeTool.component"
@@ -386,7 +395,7 @@ const getTransitionDelay = (index: number) => `${index * 100}ms`;
   box-shadow: 0 0 15px var(--color-primary/30);
 }
 
-/* 暗色模���优化 */
+/* 暗色模式优化 */
 @media (prefers-color-scheme: dark) {
   .container {
     background: linear-gradient(
@@ -395,5 +404,11 @@ const getTransitionDelay = (index: number) => `${index * 100}ms`;
       transparent 100%
     );
   }
+}
+
+/* 返回按钮容器样式 */
+.transform {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
 }
 </style>

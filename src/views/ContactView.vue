@@ -96,30 +96,33 @@ const goToGuestbook = () => {
 </script>
 
 <template>
-  <div class="container mx-auto px-4 py-12">
+  <div class="container mx-auto px-4 py-8 md:py-12">
     <div class="max-w-2xl mx-auto">
       <h1
-        class="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-gradient"
+        class="text-2xl md:text-3xl font-bold text-center mb-4 md:mb-8 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-gradient"
       >
         联系我
       </h1>
-      <p class="text-gray-600 dark:text-gray-300 text-center mb-6">
+      <p
+        class="text-sm md:text-base text-gray-600 dark:text-gray-300 text-center mb-6"
+      >
         有任何问题或建议？请随时与我联系。
       </p>
 
       <!-- 留言板入口 -->
-      <div class="text-center mb-12">
-        <p class="text-gray-600 dark:text-gray-300 mb-4">
+      <div class="text-center mb-8 md:mb-12">
+        <p
+          class="text-sm md:text-base text-gray-600 dark:text-gray-300 mb-3 md:mb-4"
+        >
           您也可以在留言板上留下您的想法
         </p>
         <button
           @click="goToGuestbook"
-          class="inline-flex items-center px-6 py-2.5 border border-transparent text-base font-medium rounded-full text-white bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 ease-in-out transform hover:scale-105"
+          class="inline-flex items-center px-5 py-2 md:px-6 md:py-2.5 text-sm md:text-base font-medium rounded-full text-white bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 ease-in-out transform hover:scale-105 shadow-sm"
         >
           <span class="mr-2">前往留言板</span>
           <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5"
+            class="w-4 h-4 md:w-5 md:h-5"
             viewBox="0 0 20 20"
             fill="currentColor"
           >
@@ -135,84 +138,83 @@ const goToGuestbook = () => {
       <!-- 表单部分 -->
       <form
         @submit.prevent="handleSubmit"
-        class="space-y-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8"
+        class="space-y-4 md:space-y-6 bg-white dark:bg-gray-800 rounded-lg md:rounded-xl shadow-sm p-4 md:p-8"
       >
-        <!-- 姓名 -->
-        <div>
-          <label
-            for="name"
-            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-          >
-            姓名 <span class="text-red-500">*</span>
-          </label>
-          <input
-            id="name"
-            v-model="formData.name"
-            type="text"
-            required
-            class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
-            :disabled="isSubmitting"
-          />
-        </div>
+        <!-- 表单字段 -->
+        <div class="space-y-4">
+          <div>
+            <label
+              for="name"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+            >
+              姓名 <span class="text-red-500">*</span>
+            </label>
+            <input
+              id="name"
+              v-model="formData.name"
+              type="text"
+              required
+              class="w-full px-3 md:px-4 py-2 text-sm md:text-base rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-colors"
+              :disabled="isSubmitting"
+            />
+          </div>
 
-        <!-- 邮箱 -->
-        <div>
-          <label
-            for="email"
-            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-          >
-            邮箱 <span class="text-red-500">*</span>
-          </label>
-          <input
-            id="email"
-            v-model="formData.email"
-            type="email"
-            required
-            class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
-            :disabled="isSubmitting"
-          />
-        </div>
+          <div>
+            <label
+              for="email"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+            >
+              邮箱 <span class="text-red-500">*</span>
+            </label>
+            <input
+              id="email"
+              v-model="formData.email"
+              type="email"
+              required
+              class="w-full px-3 md:px-4 py-2 text-sm md:text-base rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-colors"
+              :disabled="isSubmitting"
+            />
+          </div>
 
-        <!-- 主题 -->
-        <div>
-          <label
-            for="subject"
-            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-          >
-            主题
-          </label>
-          <input
-            id="subject"
-            v-model="formData.subject"
-            type="text"
-            class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
-            :disabled="isSubmitting"
-          />
-        </div>
+          <div>
+            <label
+              for="subject"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+            >
+              主题
+            </label>
+            <input
+              id="subject"
+              v-model="formData.subject"
+              type="text"
+              class="w-full px-3 md:px-4 py-2 text-sm md:text-base rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-colors"
+              :disabled="isSubmitting"
+            />
+          </div>
 
-        <!-- 留言 -->
-        <div>
-          <label
-            for="message"
-            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-          >
-            留言 <span class="text-red-500">*</span>
-          </label>
-          <textarea
-            id="message"
-            v-model="formData.message"
-            rows="6"
-            required
-            class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors resize-none"
-            :disabled="isSubmitting"
-          ></textarea>
+          <div>
+            <label
+              for="message"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+            >
+              留言 <span class="text-red-500">*</span>
+            </label>
+            <textarea
+              id="message"
+              v-model="formData.message"
+              rows="5"
+              required
+              class="w-full px-3 md:px-4 py-2 text-sm md:text-base rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-colors resize-none"
+              :disabled="isSubmitting"
+            ></textarea>
+          </div>
         </div>
 
         <!-- 提交按钮 -->
-        <div class="flex justify-center pt-4">
+        <div class="flex justify-center pt-2 md:pt-4">
           <button
             type="submit"
-            class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-full text-white bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            class="w-full md:w-auto inline-flex items-center justify-center px-6 py-2.5 md:px-8 md:py-3 text-sm md:text-base font-medium rounded-lg md:rounded-full text-white bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-sm"
             :disabled="isSubmitting"
           >
             <span v-if="isSubmitting" class="flex items-center">
@@ -264,7 +266,7 @@ const goToGuestbook = () => {
         >
           <div
             v-if="submitStatus"
-            class="text-center py-3 px-6 rounded-lg mt-6"
+            class="text-center py-2 md:py-3 px-4 md:px-6 rounded-lg mt-4 md:mt-6 text-sm md:text-base"
             :class="{
               'bg-green-50 text-green-800 dark:bg-green-900/50 dark:text-green-100':
                 submitStatus === 'success',

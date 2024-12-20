@@ -60,17 +60,14 @@ const toggleMenu = () => {
   <header
     class="fixed w-full top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm"
   >
-    <nav class="container mx-auto px-4 py-4">
+    <nav class="container mx-auto px-4 py-3 md:py-4">
       <div class="flex items-center justify-between">
         <router-link to="/" class="logo-link group relative overflow-hidden">
           <span
-            class="text-2xl font-bold bg-gradient-to-r from-[#12c2e9] via-[#c471ed] to-[#f64f59] bg-clip-text text-transparent bg-[length:200%_auto] hover:animate-gradient"
+            class="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent bg-[length:200%_auto] hover:animate-gradient"
           >
             Handsome
           </span>
-          <span
-            class="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-[#12c2e9] via-[#c471ed] to-[#f64f59] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
-          ></span>
         </router-link>
 
         <!-- 桌面端导航 -->
@@ -91,7 +88,7 @@ const toggleMenu = () => {
         <div class="md:hidden flex items-center space-x-2">
           <ThemeToggle />
           <button
-            class="menu-button p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+            class="menu-button p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
             @click.stop="toggleMenu"
             aria-label="Toggle menu"
           >
@@ -123,19 +120,19 @@ const toggleMenu = () => {
       <!-- 移动端导航菜单 -->
       <transition
         enter-active-class="transition duration-200 ease-out"
-        enter-from-class="opacity-0 -translate-y-1"
+        enter-from-class="opacity-0 -translate-y-2"
         enter-to-class="opacity-100 translate-y-0"
         leave-active-class="transition duration-150 ease-in"
         leave-from-class="opacity-100 translate-y-0"
-        leave-to-class="opacity-0 -translate-y-1"
+        leave-to-class="opacity-0 -translate-y-2"
       >
         <div v-show="isMenuOpen" class="mobile-menu md:hidden">
-          <div class="pt-2 pb-3 space-y-1">
+          <div class="py-2 space-y-1">
             <router-link
               v-for="item in navItems"
               :key="item.path"
               :to="item.path"
-              class="block px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              class="block px-4 py-2 text-base hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               :class="{
                 'bg-primary/10 text-primary': route.path === item.path,
               }"
