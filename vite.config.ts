@@ -90,4 +90,16 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"),
     },
   },
+  server: {
+    proxy: {
+      "/rss.xml": {
+        target: "https://www.mmm.sd",
+        changeOrigin: true,
+        headers: {
+          Accept: "application/xml, text/xml, */*",
+          "User-Agent": "Mozilla/5.0",
+        },
+      },
+    },
+  },
 });

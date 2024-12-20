@@ -1,16 +1,19 @@
 import type { BlogPost } from "../types/blog";
 
-// 从内容中提取图片
-function extractImage(content: string): string | undefined {
-  const imgMatch = content.match(/<img[^>]+src="([^">]+)"/);
-  return imgMatch?.[1];
+// 从 XML 元素获取文本内容
+function getElementText(element: Element | null): string {
+  if (!element) return "";
+  const text = element.textContent || "";
+  return text.replace(/<!\[CDATA\[(.*?)\]\]>/g, "$1").trim();
 }
 
+// 获取博客文章列表
 export async function fetchBlogPosts(): Promise<BlogPost[]> {
   try {
     const response = await fetch("/rss.xml", {
       headers: {
         Accept: "application/xml, text/xml, */*",
+        "User-Agent": "Mozilla/5.0",
       },
     });
 
@@ -24,23 +27,20 @@ export async function fetchBlogPosts(): Promise<BlogPost[]> {
     const items = doc.querySelectorAll("item");
 
     return Array.from(items).map((item): BlogPost => {
-      const title = item.querySelector("title")?.textContent?.trim() || "";
-      const link = item.querySelector("link")?.textContent?.trim() || "";
-      const pubDate = item.querySelector("pubDate")?.textContent?.trim();
-      const description =
-        item.querySelector("description")?.textContent?.trim() || "";
-      const category = item.querySelector("category")?.textContent?.trim();
+      const title = getElementText(item.querySelector("title"));
+      const link = getElementText(item.querySelector("link"));
+      const pubDate = getElementText(item.querySelector("pubDate"));
+      const description = getElementText(item.querySelector("description"));
+      const category = getElementText(item.querySelector("category"));
       const content =
-        item.querySelector("content\\:encoded")?.textContent?.trim() ||
-        description;
+        getElementText(item.querySelector("content\\:encoded")) || description;
 
       return {
         title,
         link,
         date: pubDate ? new Date(pubDate) : new Date(),
         description: content,
-        category,
-        image: extractImage(content),
+        category: category || "默认分类",
       };
     });
   } catch (error) {
