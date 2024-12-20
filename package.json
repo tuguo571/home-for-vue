@@ -1,7 +1,12 @@
 {
   "name": "home-for-vue",
+  "version": "1.0.0",
+  "license": "MIT",
+  "author": {
+    "name": "Handsome",
+    "url": "https://www.mmm.sd/"
+  },
   "private": true,
-  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -53,7 +53,7 @@ src/
 项目使用以下环境变量：
 
 ```
-EmailJS 配置
+EmailJS ���置
 VITE_EMAILJS_SERVICE_ID=your_service_id
 VITE_EMAILJS_TEMPLATE_ID=your_template_id
 VITE_EMAILJS_PUBLIC_KEY=your_public_key
@@ -141,13 +141,25 @@ server {
 - 模块化的配置系统
 - 优雅的错误处理
 - 完整的类型支持
-- 高性能的构建输出
+- 高性能的���建输出
 - SEO 友好
 - 可访问性支持
 
 ## 许可证
 
-MIT License
+本项目采用修改版 MIT 许可证。在遵循 MIT 许可证的基础上，还需遵守以下条款：
+
+1. 必须保留页脚版权信息和作者署名
+2. 不得修改页脚中的作者信息
+3. 商业使用需获得作者明确授权
+
+详见 [LICENSE](./LICENSE) 文件。
+
+### 版权声明
+
+- 代码版权归作者 [Handsome](https://www.mmm.sd/) 所有
+- 页脚版权信息不得移除或修改
+- 违反协议的使用行为将被追究法律责任
 
 ## 作者
 

@@ -9,9 +9,19 @@ export default defineConfig({
   build: {
     outDir: "dist",
     assetsDir: "assets",
-    minify: "esbuild",
+    minify: "terser",
     sourcemap: false,
     chunkSizeWarningLimit: 1500,
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+        pure_funcs: ["console.log"],
+      },
+      format: {
+        comments: /@license/i,
+      },
+    },
     rollupOptions: {
       output: {
         manualChunks: {

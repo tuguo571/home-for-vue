@@ -78,41 +78,50 @@
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { RouterLink, useRouter } from "vue-router";
 import { footerConfig } from "@/config/footer";
+import { createCopyrightGuard } from "@/utils/copyright";
 
 const router = useRouter();
 const footerRef = ref<HTMLElement | null>(null);
 const copyrightRef = ref<HTMLElement | null>(null);
 
-// 版权验证函数
-const verifyCopyright = () => {
-  const footer = footerRef.value;
-  const copyright = copyrightRef.value;
-
-  if (!footer || !copyright) return;
-
-  // 检查版权信息是否存在且完整
-  const isValid =
-    copyright.textContent?.includes("© " + new Date().getFullYear()) &&
-    copyright.textContent?.includes("Handsome") &&
-    copyright.textContent?.includes("All rights reserved");
-
-  // 如果版权信息被修改，重定向到博客
-  if (!isValid) {
-    window.location.href = "https://www.mmm.sd/";
-  }
-};
+const guard = createCopyrightGuard;
 
 // 定期检查版权信息
 let intervalId: number;
+let randomInterval: number;
 
 onMounted(() => {
-  verifyCopyright();
-  intervalId = window.setInterval(verifyCopyright, 1000);
+  // 初始检查
+  guard(copyrightRef.value);
+
+  // 随机间隔检查
+  const check = () => {
+    guard(copyrightRef.value);
+    randomInterval = window.setTimeout(check, Math.random() * 2000 + 1000);
+  };
+  check();
+
+  // 固定间隔检查
+  intervalId = window.setInterval(() => guard(copyrightRef.value), 1000);
+
+  // 添加DOM变化监听
+  const observer = new MutationObserver(() => guard(copyrightRef.value));
+  if (copyrightRef.value) {
+    observer.observe(copyrightRef.value, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+      attributes: true,
+    });
+  }
 });
 
 onBeforeUnmount(() => {
   if (intervalId) {
     window.clearInterval(intervalId);
+  }
+  if (randomInterval) {
+    window.clearTimeout(randomInterval);
   }
 });
 </script>
