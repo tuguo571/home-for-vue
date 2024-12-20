@@ -21,20 +21,20 @@ export const noticeConfig: NoticeConfig = {
   width: "500px",
   maskClosable: true,
   showClose: true,
-  defaultShowAfter: null,
+  defaultShowAfter: 10,
   buttons: [
     {
       text: "稍后查看",
       type: "secondary",
       action: "close",
-      showAfter: 0,
+      showAfter: null,
     },
     {
       text: "立即体验",
       type: "primary",
       action: "navigate",
       to: "/projects",
-      showAfter: 86400000,
+      showAfter: null,
     },
   ],
 };

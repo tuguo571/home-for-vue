@@ -97,6 +97,7 @@ const checkNotice = () => {
 
 onMounted(() => {
   checkNotice();
+  localStorage.removeItem(`notice_${noticeConfig.id}`);
 });
 </script>
 

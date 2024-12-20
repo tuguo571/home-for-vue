@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
+import Fireworks from "@/components/effects/Fireworks.vue";
 
 interface Props {
   show: boolean;
@@ -45,65 +46,83 @@ watch(
     }
   },
 );
+
+const showFireworks = ref(false);
+
+watch(
+  () => props.show,
+  (newVal) => {
+    if (newVal) {
+      showFireworks.value = true;
+      setTimeout(() => {
+        showFireworks.value = false;
+      }, 3000); // 3秒后关闭烟花效果
+    }
+  },
+);
 </script>
 
 <template>
-  <Transition name="modal">
-    <div
-      v-if="show"
-      ref="modalRef"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
-      @click="handleMaskClick"
-    >
-      <div
-        class="bg-white dark:bg-gray-800 rounded-lg shadow-xl transform transition-all"
-        :style="{ width }"
-      >
-        <!-- 标题栏 -->
+  <Teleport to="body">
+    <Transition name="modal">
+      <div v-if="show" class="fixed inset-0 z-[90]">
+        <Fireworks v-if="showFireworks" />
         <div
-          v-if="title || showClose"
-          class="flex items-center justify-between px-6 py-4 border-b dark:border-gray-700"
+          ref="modalRef"
+          class="fixed inset-0 z-[90] flex items-center justify-center bg-black/50 backdrop-blur-sm"
+          @click="handleMaskClick"
         >
-          <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-            {{ title }}
-          </h3>
-          <button
-            v-if="showClose"
-            class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 transition-colors"
-            @click="emit('update:show', false)"
+          <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-xl transform transition-all"
+            :style="{ width }"
           >
-            <span class="sr-only">关闭</span>
-            <svg
-              class="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+            <!-- 标题栏 -->
+            <div
+              v-if="title || showClose"
+              class="flex items-center justify-between px-6 py-4 border-b dark:border-gray-700"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
+              <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                {{ title }}
+              </h3>
+              <button
+                v-if="showClose"
+                class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 transition-colors"
+                @click="emit('update:show', false)"
+              >
+                <span class="sr-only">关闭</span>
+                <svg
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
 
-        <!-- 内容区 -->
-        <div class="px-6 py-4">
-          <slot></slot>
-        </div>
+            <!-- 内容区 -->
+            <div class="px-6 py-4">
+              <slot></slot>
+            </div>
 
-        <!-- 按钮区 -->
-        <div
-          v-if="$slots.footer"
-          class="px-6 py-4 bg-gray-50 dark:bg-gray-700/50 rounded-b-lg"
-        >
-          <slot name="footer"></slot>
+            <!-- 按钮区 -->
+            <div
+              v-if="$slots.footer"
+              class="px-6 py-4 bg-gray-50 dark:bg-gray-700/50 rounded-b-lg"
+            >
+              <slot name="footer"></slot>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </Transition>
+    </Transition>
+  </Teleport>
 </template>
 
 <style scoped>
