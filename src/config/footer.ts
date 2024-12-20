@@ -23,7 +23,7 @@ export const footerConfig: FooterConfig = {
     },
     {
       text: "GitHub",
-      href: "https://github.com/handsome",
+      href: "https://github.com/acanyo",
       target: "_blank",
     },
   ],
