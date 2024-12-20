@@ -39,16 +39,14 @@ watch(
 </script>
 
 <template>
-  <div
-    class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
-  >
+  <div class="flex flex-col min-h-screen bg-main text-primary">
     <TheHeader />
-    <main class="min-h-screen pt-20 pb-16">
-      <RouterView v-slot="{ Component }">
+    <main class="flex-grow pt-20">
+      <router-view v-slot="{ Component }">
         <PageTransition :name="route.meta.transition || 'fade'">
           <component :is="Component" />
         </PageTransition>
-      </RouterView>
+      </router-view>
     </main>
     <TheFooter />
     <Toast />

@@ -1,27 +1,28 @@
 import { createRouter, createWebHistory } from "vue-router";
-import type { RouteRecordRaw, RouteMeta } from "vue-router";
-
-declare module "vue-router" {
-  interface RouteMeta {
-    title: string;
-    transition?: string;
-  }
-}
+import type { RouteRecordRaw } from "vue-router";
+import HomeView from "@/views/HomeView.vue";
 
 const routes: RouteRecordRaw[] = [
   {
     path: "/",
-    name: "Home",
-    component: () => import("@/views/HomeView.vue"),
+    name: "home",
+    component: HomeView,
     meta: {
       title: "个人作品集 | 首页",
-      description: "Java后端开发工程师的个人作品集展示",
-      keywords: "Java,Spring Boot,后端开发,个人作品集",
+    },
+  },
+  {
+    path: "/skills",
+    name: "skills",
+    component: () => import("@/views/SkillsView.vue"),
+    meta: {
+      title: "技能",
+      transition: "slide-right",
     },
   },
   {
     path: "/projects",
-    name: "Projects",
+    name: "projects",
     component: () => import("@/views/ProjectsView.vue"),
     meta: {
       title: "项目",
@@ -30,7 +31,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: "/tools",
-    name: "Tools",
+    name: "tools",
     component: () => import("@/views/ToolsView.vue"),
     meta: {
       title: "工具箱",
@@ -39,7 +40,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: "json",
-        name: "JsonFormatter",
+        name: "json-formatter",
         component: () => import("@/views/tools/JsonFormatterView.vue"),
         meta: {
           title: "JSON 格式化",
@@ -48,7 +49,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: "bookmarks",
-        name: "Bookmarks",
+        name: "bookmarks",
         component: () => import("@/views/tools/BookmarksView.vue"),
         meta: {
           title: "网址导航",
@@ -57,7 +58,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: "timestamp",
-        name: "Timestamp",
+        name: "timestamp",
         component: () => import("@/views/tools/TimestampView.vue"),
         meta: {
           title: "时间戳转换",
@@ -67,27 +68,16 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
-    path: "/skills",
-    name: "Skills",
-    component: () => import("@/views/SkillsView.vue"),
-    meta: {
-      title: "技能",
-      transition: "slide-right",
-    },
-  },
-  {
     path: "/blog",
-    name: "Blog",
+    name: "blog",
     component: () => import("@/views/BlogView.vue"),
     meta: {
-      title: "技术博客 | 个人作品集",
-      description: "分享Java后端开发技术文章和经验",
-      keywords: "Java博客,技术文章,Spring Boot教程,后端开发笔记",
+      title: "技术博客",
     },
   },
   {
     path: "/contact",
-    name: "Contact",
+    name: "contact",
     component: () => import("@/views/ContactView.vue"),
     meta: {
       title: "联系",
@@ -97,7 +87,7 @@ const routes: RouteRecordRaw[] = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
@@ -107,8 +97,9 @@ const router = createRouter({
   },
 });
 
+// 路由标题
 router.beforeEach((to, from, next) => {
-  document.title = `${to.meta.title} | Handsome`;
+  document.title = `${to.meta.title || "首页"} | Handsome`;
   next();
 });
 

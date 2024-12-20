@@ -3,7 +3,7 @@
     <div
       class="container mx-auto px-4 text-center text-gray-600 dark:text-gray-300"
     >
-      <p>© {{ new Date().getFullYear() }} YourName. All rights reserved.</p>
+      <p>© {{ new Date().getFullYear() }} Handsome. All rights reserved.</p>
     </div>
   </footer>
 </template>

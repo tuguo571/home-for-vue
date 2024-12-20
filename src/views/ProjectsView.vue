@@ -207,7 +207,7 @@ const getTransitionDelay = (index: number) => `${index * 100}ms`;
                 >
                   {{
                     tool.status === "completed"
-                      ? "已完成完成"
+                      ? "已完成"
                       : tool.status === "developing"
                         ? "开发中"
                         : "规划中"
