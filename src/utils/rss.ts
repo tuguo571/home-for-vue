@@ -11,12 +11,9 @@ function getElementText(element: Element | null): string {
 // 获取博客文章列表
 export async function fetchBlogPosts(): Promise<BlogPost[]> {
   try {
-    const response = await fetch(rssConfig.url, {
-      headers: {
-        Accept: "application/xml, text/xml, */*",
-        "User-Agent": "Mozilla/5.0",
-      },
-    });
+    // 使用 allorigins 代理服务
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(rssConfig.url)}`;
+    const response = await fetch(proxyUrl);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
