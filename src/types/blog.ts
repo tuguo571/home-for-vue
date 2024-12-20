@@ -4,4 +4,5 @@ export interface BlogPost {
   date: Date;
   description: string;
   category?: string;
+  image?: string;
 }

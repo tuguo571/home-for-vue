@@ -2,11 +2,11 @@
 import { ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { RouterView } from "vue-router";
-import TheHeader from "@/components/layout/TheHeader.vue";
-import TheFooter from "@/components/layout/TheFooter.vue";
-import PageTransition from "@/components/PageTransition.vue";
-import Toast from "@/components/ui/Toast.vue";
-import Modal from "@/components/ui/Modal.vue";
+import TheHeader from "./components/layout/TheHeader.vue";
+import TheFooter from "./components/layout/TheFooter.vue";
+import PageTransition from "./components/PageTransition.vue";
+import Toast from "./components/ui/Toast.vue";
+import Modal from "./components/ui/Modal.vue";
 import { noticeConfig } from "./config/notice";
 import type { NoticeButton } from "./types/notice";
 import { siteConfig } from "./config/site";
@@ -48,7 +48,7 @@ const handleNoticeAction = (button: NoticeButton) => {
   const now = Date.now();
   const showAfter = button.showAfter ?? noticeConfig.defaultShowAfter;
 
-  // 设置下次显示时间
+  // 设置下次显示��间
   if (showAfter !== undefined) {
     localStorage.setItem(
       `notice_${noticeConfig.id}`,

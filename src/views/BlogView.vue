@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
-import { fetchBlogPosts } from "@/utils/rss";
-import type { BlogPost } from "@/types/blog";
-import PageTransition from "@/components/PageTransition.vue";
+import { fetchBlogPosts } from "../utils/rss";
+import type { BlogPost } from "../types/blog";
+import PageTransition from "../components/PageTransition.vue";
 
 const posts = ref<BlogPost[]>([]);
 const loading = ref(true);

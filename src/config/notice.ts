@@ -1,4 +1,4 @@
-import type { NoticeConfig } from "@/types/notice";
+import type { NoticeConfig } from "../types/notice";
 
 export const noticeConfig: NoticeConfig = {
   id: "site_notice_v1",
