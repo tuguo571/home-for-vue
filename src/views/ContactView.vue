@@ -43,19 +43,6 @@ const handleSubmit = async () => {
   try {
     isSubmitting.value = true;
 
-    console.log("开始发送邮件...", {
-      serviceId: emailConfig.serviceId,
-      templateId: emailConfig.templateId,
-      publicKey: emailConfig.publicKey,
-      data: {
-        from_name: formData.value.name,
-        from_email: formData.value.email,
-        subject: formData.value.subject,
-        message: formData.value.message,
-        reply_to: formData.value.email,
-      },
-    });
-
     const result = await emailjs.send(
       emailConfig.serviceId,
       emailConfig.templateId,
@@ -69,7 +56,6 @@ const handleSubmit = async () => {
       emailConfig.publicKey,
     );
 
-    console.log("邮件发送结果:", result);
     submitStatus.value = "success";
     formData.value = {
       name: "",
@@ -79,12 +65,7 @@ const handleSubmit = async () => {
     };
   } catch (error: any) {
     submitStatus.value = "error";
-    console.error("邮件发送失败:", {
-      error,
-      message: error.message,
-      text: error.text,
-    });
-    alert(`发送失败: ${error.message || "请稍后重试"}`);
+    alert(`发送失败: ${error.text || error.message || "请稍后重试"}`);
   } finally {
     isSubmitting.value = false;
   }
