@@ -65,10 +65,13 @@ VITE_GUESTBOOK_URL=your_guestbook_url
 
 安装依赖
 `npm install`
+
 开发环境运行
 `npm run dev`
+
 构建生产版本
 `npm run build`
+
 预览生产构建
 `npm run preview`
 
@@ -79,7 +82,8 @@ VITE_GUESTBOOK_URL=your_guestbook_url
 1. 配置正确的环境变量
 2. 设置适当的 Nginx/Apache 重定向规则
 3. 启用 HTTPS 以确保安全性
-   nginx 配置参考
+
+nginx 配置参考
 
 ```
 server {
@@ -155,4 +159,4 @@ MIT License
 
 ## 推荐服务商
 
-[Rainyun](https://app.rainyun.com/) 提供 CDN 加速 / 云存储服务
+[Rainyun](https://www.rainyun.com/handsome_/) 提供 CDN 加速 / 云存储服务
