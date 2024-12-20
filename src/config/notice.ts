@@ -27,13 +27,14 @@ export const noticeConfig: NoticeConfig = {
       text: "稍后查看",
       type: "secondary",
       action: "close",
-      showAfter: 0, // 1小时后再次显示
+      showAfter: 0,
     },
     {
       text: "立即体验",
       type: "primary",
-      action: "close",
-      showAfter: 86400000, // 24小时后再次显示
+      action: "navigate",
+      to: "/projects",
+      showAfter: 86400000,
     },
   ],
 };

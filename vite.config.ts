@@ -1,77 +1,93 @@
-import { defineConfig, loadEnv } from "vite";
+import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
-import {
-  config,
-  generateSitemap,
-  generateRobots,
-  siteConfig,
-} from "./src/config";
-import { fileURLToPath, URL } from "node:url";
+import viteCompression from "vite-plugin-compression";
+import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
 
-export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd());
-  const siteUrl = env.VITE_SITE_URL || config.siteUrl;
-
-  return {
-    plugins: [
-      vue(),
-      {
-        name: "html-transform",
-        transformIndexHtml(html) {
-          return html
-            .replace(/<title>.*?<\/title>/, `<title>${config.siteName}</title>`)
-            .replace(
-              /content="__DESCRIPTION__"/g,
-              `content="${config.siteDescription}"`,
-            )
-            .replace(
-              /content="__KEYWORDS__"/g,
-              `content="${config.siteKeywords}"`,
-            )
-            .replace(/content="__AUTHOR__"/g, `content="${config.author}"`)
-            .replace(/content="__URL__"/g, `content="${siteUrl}"`)
-            .replace(/content="__TITLE__"/g, `content="${config.siteName}"`)
-            .replace(
-              /content="__LOGO__"/g,
-              `content="${siteConfig.images.ogImage}"`,
-            )
-            .replace(/content="__SITE_NAME__"/g, `content="${config.siteName}"`)
-            .replace(/href="__URL__"/g, `href="${siteUrl}"`);
+export default defineConfig({
+  base: "/",
+  build: {
+    outDir: "dist",
+    assetsDir: "assets",
+    minify: "terser",
+    sourcemap: false,
+    chunkSizeWarningLimit: 1500,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ["vue", "vue-router"],
+          utils: ["./src/utils"],
+          components: ["./src/components"],
         },
-      },
-      {
-        name: "generate-seo-files",
-        buildStart() {
-          this.emitFile({
-            type: "asset",
-            fileName: "sitemap.xml",
-            source: generateSitemap(siteUrl),
-          });
-          this.emitFile({
-            type: "asset",
-            fileName: "robots.txt",
-            source: generateRobots(siteUrl),
-          });
-        },
-      },
-    ],
-    resolve: {
-      alias: {
-        "@": path.resolve(__dirname, "src"),
+        chunkFileNames: "assets/js/[name]-[hash].js",
+        entryFileNames: "assets/js/[name]-[hash].js",
+        assetFileNames: "assets/[ext]/[name]-[hash].[ext]",
       },
     },
-    server: {
-      proxy: {
-        "/rss.xml": {
-          target: "https://www.mmm.sd",
-          changeOrigin: true,
-          headers: {
-            Accept: "application/xml, text/xml, */*",
-            Referer: "https://www.mmm.sd",
+    cssCodeSplit: true,
+    cssMinify: true,
+  },
+  plugins: [
+    vue(),
+    viteCompression({
+      verbose: true,
+      disable: false,
+      threshold: 10240,
+      algorithm: "gzip",
+      ext: ".gz",
+    }),
+    ViteImageOptimizer({
+      test: /\.(jpe?g|png|gif|svg)$/i,
+      exclude: undefined,
+      include: undefined,
+      includePublic: true,
+      logStats: true,
+      ansiColors: true,
+      svg: {
+        multipass: true,
+        plugins: [
+          {
+            name: "preset-default",
+            params: {
+              overrides: {
+                removeViewBox: false,
+                removeEmptyAttrs: false,
+              },
+            },
           },
-        },
+        ],
       },
+      png: {
+        // sharp options
+        quality: 80,
+      },
+      jpeg: {
+        // sharp options
+        quality: 80,
+      },
+      jpg: {
+        // sharp options
+        quality: 80,
+      },
+      tiff: {
+        // sharp options
+        quality: 80,
+      },
+      // gif uses gifsicle
+      gif: undefined,
+      webp: {
+        // sharp options
+        quality: 80,
+      },
+      avif: {
+        // sharp options
+        quality: 80,
+      },
+    }),
+  ],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "src"),
     },
-  };
+  },
 });
