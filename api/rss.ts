@@ -1,7 +1,12 @@
 // Vercel Serverless Function
-export default async function handler(req, res) {
+export default async function handler(res) {
   try {
-    const response = await fetch(process.env.RSS_URL);
+    const rssUrl = process.env.RSS_URL;
+    if (!rssUrl) {
+      throw new Error("RSS_URL environment variable is not defined");
+    }
+
+    const response = await fetch(rssUrl);
     const data = await response.text();
 
     res.setHeader("Access-Control-Allow-Origin", "*");

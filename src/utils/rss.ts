@@ -1,46 +1,36 @@
 import type { BlogPost } from "../types/blog";
 import { rssConfig } from "@/config/rss";
 
-// 从 XML 元素获取文本内容
-function getElementText(element: Element | null): string {
-  if (!element) return "";
-  const text = element.textContent || "";
-  return text.replace(/<!\[CDATA\[(.*?)\]\]>/g, "$1").trim();
-}
-
-// 获取博客文章列表
+// 使用 RSS2JSON API 转换 RSS 为 JSON
 export async function fetchBlogPosts(): Promise<BlogPost[]> {
   try {
-    // 使用 allorigins 代理服务
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(rssConfig.url)}`;
-    const response = await fetch(proxyUrl);
+    if (!rssConfig.url) {
+      throw new Error("RSS URL is not defined");
+    }
+
+    // 使用 RSS2JSON 服务
+    const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssConfig.url)}`;
+    const response = await fetch(apiUrl);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const xmlText = await response.text();
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(xmlText, "text/xml");
-    const items = doc.querySelectorAll("item");
+    const data = await response.json();
 
-    return Array.from(items).map((item): BlogPost => {
-      const title = getElementText(item.querySelector("title"));
-      const link = getElementText(item.querySelector("link"));
-      const pubDate = getElementText(item.querySelector("pubDate"));
-      const description = getElementText(item.querySelector("description"));
-      const category = getElementText(item.querySelector("category"));
-      const content =
-        getElementText(item.querySelector("content\\:encoded")) || description;
+    if (data.status !== "ok") {
+      throw new Error("Failed to fetch RSS feed");
+    }
 
-      return {
-        title,
-        link,
-        date: pubDate ? new Date(pubDate) : new Date(),
-        description: content,
-        category: category || "默认分类",
-      };
-    });
+    return data.items.map(
+      (item: any): BlogPost => ({
+        title: item.title,
+        link: item.link,
+        date: new Date(item.pubDate),
+        description: item.content || item.description,
+        category: item.category || "默认分类",
+      }),
+    );
   } catch (error) {
     console.error("获取博客文章失败:", error);
     return [];
