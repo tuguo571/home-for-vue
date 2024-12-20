@@ -67,10 +67,23 @@ const structuredData = {
 
 <template>
   <div class="min-h-screen">
-    <section class="container mx-auto px-4 py-24 md:py-36">
+    <section class="container mx-auto px-4 py-12 md:py-16">
       <div class="max-w-3xl mx-auto text-center">
+        <div class="mb-6">
+          <div class="relative inline-block avatar-container">
+            <img
+              src="https://q.qlogo.cn/headimg_dl?dst_uin=30819792&spec=640&img_type=jpg"
+              alt="头像"
+              class="w-24 h-24 md:w-32 md:h-32 rounded-full shadow-xl border-4 border-white dark:border-gray-700 transition-all duration-300 avatar"
+            />
+            <div class="glow-effect"></div>
+            <div class="halo-effect"></div>
+            <div class="rotating-border"></div>
+          </div>
+        </div>
+
         <PageTransition name="bounce">
-          <h1 class="text-4xl md:text-6xl font-bold mb-10">
+          <h1 class="text-4xl md:text-6xl font-bold mb-6">
             <span class="block mb-6 text-gray-900 dark:text-white">
               <span class="opacity-0 animate-fade-in">你好</span>
               <span
@@ -85,7 +98,7 @@ const structuredData = {
           </h1>
         </PageTransition>
 
-        <div class="h-10 mb-12 overflow-hidden">
+        <div class="h-8 mb-8 overflow-hidden">
           <transition name="fade" mode="out-in">
             <p
               :key="currentTitleIndex"
@@ -98,7 +111,7 @@ const structuredData = {
 
         <PageTransition name="slide-right">
           <p
-            class="text-base md:text-lg text-gray-600 dark:text-gray-400 mb-14 max-w-2xl mx-auto leading-loose typewriter"
+            class="text-base md:text-lg text-gray-600 dark:text-gray-400 mb-10 max-w-2xl mx-auto leading-loose typewriter"
           >
             {{ slogan
             }}<span
@@ -130,7 +143,7 @@ const structuredData = {
         </PageTransition>
 
         <PageTransition name="scale">
-          <div class="mt-28">
+          <div class="mt-20">
             <h2 class="text-xl font-bold mb-8 text-gray-800 dark:text-gray-100">
               技能标签
             </h2>
@@ -344,5 +357,136 @@ const structuredData = {
   @apply bg-gradient-to-r from-[#12c2e9] via-[#c471ed] to-[#f64f59] bg-clip-text text-transparent;
   background-size: 300% auto;
   animation: gradient 6s linear infinite;
+}
+
+/* 简化头像容器样式 */
+.avatar-container {
+  position: relative;
+  z-index: 1;
+}
+
+/* 简化头像基础样式 */
+.avatar {
+  position: relative;
+  z-index: 2;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: float 6s ease-in-out infinite;
+}
+
+/* 保留柔和的悬浮动画 */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* 简化发光效果 */
+.glow-effect {
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(45deg, var(--color-primary), #c471ed, #f64f59);
+  border-radius: 50%;
+  filter: blur(15px);
+  opacity: 0.2;
+  z-index: 1;
+  animation: glow 3s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    opacity: 0.15;
+    filter: blur(15px);
+  }
+  50% {
+    opacity: 0.25;
+    filter: blur(18px);
+  }
+}
+
+/* 暗色模式适配 */
+@media (prefers-color-scheme: dark) {
+  .glow-effect {
+    filter: blur(20px);
+    animation: glowDark 3s ease-in-out infinite;
+  }
+
+  @keyframes glowDark {
+    0%,
+    100% {
+      opacity: 0.2;
+      filter: blur(20px);
+    }
+    50% {
+      opacity: 0.3;
+      filter: blur(22px);
+    }
+  }
+}
+
+/* 光晕效果 - 持续存在 */
+.halo-effect {
+  position: absolute;
+  inset: -4px;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(var(--color-primary-rgb), 0.15),
+    transparent 70%
+  );
+  border-radius: 50%;
+  z-index: 1;
+  animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+}
+
+/* 旋转边框效果 - 持续旋转 */
+.rotating-border {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, var(--color-primary), transparent 60%);
+  opacity: 0.2;
+  z-index: 1;
+  animation: spin 8s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 暗色模式适配 */
+@media (prefers-color-scheme: dark) {
+  .halo-effect {
+    background: radial-gradient(
+      circle at 50% 50%,
+      rgba(var(--color-primary-rgb), 0.2),
+      transparent 70%
+    );
+  }
+
+  .rotating-border {
+    opacity: 0.25;
+    background: linear-gradient(45deg, var(--color-primary), transparent 70%);
+  }
 }
 </style>
