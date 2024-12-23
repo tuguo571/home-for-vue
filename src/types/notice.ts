@@ -1,11 +1,11 @@
 export interface NoticeButton {
   text: string;
-  type?: "primary" | "secondary" | "danger";
+  type?: string;
   action: "close" | "navigate" | "link" | "custom";
   to?: string;
   href?: string;
-  showAfter?: number | null; // null 表示刷新后就显示
   handler?: () => void;
+  showAfter?: number | "refresh" | null;
 }
 
 export interface NoticeConfig {
@@ -16,5 +16,4 @@ export interface NoticeConfig {
   maskClosable?: boolean;
   showClose?: boolean;
   buttons: NoticeButton[];
-  defaultShowAfter?: number | null;
 }

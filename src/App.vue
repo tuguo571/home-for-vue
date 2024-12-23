@@ -48,11 +48,11 @@ const handleNoticeAction = (button: NoticeButton) => {
   const now = Date.now();
   const showAfter = button.showAfter ?? noticeConfig.defaultShowAfter;
 
-  // 设置下次显示间
-  if (showAfter !== undefined) {
+  // 设置下次显示时间
+  if (showAfter !== undefined && showAfter !== null) {
     localStorage.setItem(
       `notice_${noticeConfig.id}`,
-      showAfter === null ? "refresh" : String(now + showAfter),
+      showAfter === "refresh" ? "refresh" : String(now + showAfter),
     );
   }
 
@@ -84,20 +84,25 @@ const handleNoticeAction = (button: NoticeButton) => {
 
 // 检查是否显示公告
 const checkNotice = () => {
+  // 如果公告被禁用，直接返回
+  if (!noticeConfig.enabled) return;
+
   const nextShowTime = localStorage.getItem(`notice_${noticeConfig.id}`);
 
-  if (
-    !nextShowTime ||
-    nextShowTime === "refresh" ||
-    Date.now() >= Number(nextShowTime)
-  ) {
+  // 首次访问时显示公告
+  if (!nextShowTime) {
+    showNotice.value = true;
+    return;
+  }
+
+  // 如果是 refresh 或者时间已过，显示公告
+  if (nextShowTime === "refresh" || Date.now() >= Number(nextShowTime)) {
     showNotice.value = true;
   }
 };
 
 onMounted(() => {
   checkNotice();
-  localStorage.removeItem(`notice_${noticeConfig.id}`);
 });
 </script>
 
@@ -119,6 +124,7 @@ onMounted(() => {
       :width="noticeConfig.width"
       :mask-closable="noticeConfig.maskClosable"
       :show-close="noticeConfig.showClose"
+      :show-fireworks="true"
     >
       <div v-html="noticeConfig.content"></div>
 
@@ -133,8 +139,6 @@ onMounted(() => {
                 button.type === 'primary',
               'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600':
                 button.type === 'secondary',
-              'text-white bg-red-500 hover:bg-red-600':
-                button.type === 'danger',
             }"
             @click="handleNoticeAction(button)"
           >

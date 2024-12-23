@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import Fireworks from "@/components/effects/Fireworks.vue";
+import { noticeConfig } from "@/config/notice";
 
 interface Props {
   show: boolean;
@@ -8,6 +9,7 @@ interface Props {
   width?: string;
   maskClosable?: boolean;
   showClose?: boolean;
+  showFireworks?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -15,6 +17,7 @@ const props = withDefaults(defineProps<Props>(), {
   width: "500px",
   maskClosable: true,
   showClose: true,
+  showFireworks: false,
 });
 
 const emit = defineEmits(["update:show"]);
@@ -52,11 +55,11 @@ const showFireworks = ref(false);
 watch(
   () => props.show,
   (newVal) => {
-    if (newVal) {
+    if (newVal && props.showFireworks && noticeConfig.showFireworks) {
       showFireworks.value = true;
       setTimeout(() => {
         showFireworks.value = false;
-      }, 3000); // 3秒后关闭烟花效果
+      }, 3000);
     }
   },
 );

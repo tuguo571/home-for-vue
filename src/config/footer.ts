@@ -21,6 +21,12 @@ export const footerConfig: FooterConfig = {
       text: "联系",
       to: "/contact",
     },
+
+    {
+      text: "博客",
+      href: "https://www.mmm.sd",
+      target: "_blank",
+    },
     {
       text: "GitHub",
       href: "https://github.com/acanyo",

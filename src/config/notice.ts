@@ -1,7 +1,23 @@
-import type { NoticeConfig } from "../types/notice";
+import type {
+  NoticeButton as BaseNoticeButton,
+  NoticeConfig as BaseNoticeConfig,
+} from "../types/notice";
 
-export const noticeConfig: NoticeConfig = {
+interface NoticeButton extends BaseNoticeButton {
+  type: "primary" | "secondary" | "danger";
+}
+
+interface ExtendedNoticeConfig extends BaseNoticeConfig {
+  enabled: boolean;
+  showFireworks: boolean;
+  defaultShowAfter?: number | "refresh" | null;
+  buttons: NoticeButton[];
+}
+
+export const noticeConfig: ExtendedNoticeConfig = {
   id: "site_notice_v1",
+  enabled: true,
+  showFireworks: true,
   title: "网站公告",
   content: `
     <div class="text-center">
@@ -21,20 +37,20 @@ export const noticeConfig: NoticeConfig = {
   width: "500px",
   maskClosable: true,
   showClose: true,
-  defaultShowAfter: 10,
+  defaultShowAfter: null,
   buttons: [
     {
       text: "稍后查看",
       type: "secondary",
       action: "close",
-      showAfter: null,
+      showAfter: "refresh",
     },
     {
       text: "立即体验",
       type: "primary",
       action: "navigate",
       to: "/projects",
-      showAfter: null,
+      showAfter: 3 * 60 * 60 * 1000,
     },
   ],
 };
