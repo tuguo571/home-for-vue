@@ -53,7 +53,7 @@ src/
 项目使用以下环境变量：
 
 ```
-EmailJS ���置
+EmailJS 配置
 VITE_EMAILJS_SERVICE_ID=your_service_id
 VITE_EMAILJS_TEMPLATE_ID=your_template_id
 VITE_EMAILJS_PUBLIC_KEY=your_public_key
