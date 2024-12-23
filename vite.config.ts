@@ -4,6 +4,7 @@ import path from "path";
 import viteCompression from "vite-plugin-compression";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
 import { siteConfig } from "./src/config/site";
+import { fontConfig } from "./src/config/font";
 
 export default defineConfig({
   base: "/",
@@ -107,5 +108,8 @@ export default defineConfig({
   define: {
     __VUE_OPTIONS_API__: true,
     __VUE_PROD_DEVTOOLS__: false,
+    "process.env.VITE_FONT_URL": JSON.stringify(fontConfig.url),
+    "process.env.VITE_FONT_ENABLED": JSON.stringify(fontConfig.enabled),
+    "process.env.VITE_FONT_PRELOAD": JSON.stringify(fontConfig.preload),
   },
 });

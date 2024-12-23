@@ -1,6 +1,6 @@
 interface ConsoleInfo {
   text: string;
-  version: string;
+  version: string | undefined;
   link: string;
   style?: string;
 }
@@ -43,7 +43,7 @@ export const printConsoleInfo = (info: ConsoleInfo) => {
 
   // 主信息
   console.log(
-    `%c ${info.text} %c ${info.version} %c ${info.link} `,
+    `%c ${info.text} %c ${info.version || ""} %c ${info.link} `,
     titleStyle,
     versionStyle,
     linkStyle,
