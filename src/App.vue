@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute, useRouter, type RouteMeta } from "vue-router";
 import { RouterView } from "vue-router";
 import TheHeader from "./components/layout/TheHeader.vue";
 import TheFooter from "./components/layout/TheFooter.vue";
@@ -22,7 +22,7 @@ const isDev = import.meta.env.DEV;
 // 监听路由变化更新页面标题和描述
 watch(
   () => route.meta,
-  (meta) => {
+  (meta: RouteMeta) => {
     if (meta.title) {
       document.title = `${meta.title} | ${siteConfig.name}`;
     }

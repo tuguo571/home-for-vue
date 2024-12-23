@@ -3,7 +3,6 @@ import vue from "@vitejs/plugin-vue";
 import path from "path";
 import viteCompression from "vite-plugin-compression";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
-import { siteConfig } from "./src/config/site";
 import { fontConfig } from "./src/config/font";
 
 export default defineConfig({
@@ -98,9 +97,12 @@ export default defineConfig({
       "/rss.xml": {
         target: "https://www.mmm.sd",
         changeOrigin: true,
+        rewrite: (path) => path + '?t=' + Date.now(),
         headers: {
           Accept: "application/xml, text/xml, */*",
           "User-Agent": "Mozilla/5.0",
+          "Cache-Control": "no-cache",
+          "Pragma": "no-cache"
         },
       },
     },

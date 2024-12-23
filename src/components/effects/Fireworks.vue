@@ -9,6 +9,14 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from "vue";
 
+interface Props {
+  enabled?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  enabled: true,
+});
+
 const canvas = ref<HTMLCanvasElement | null>(null);
 let ctx: CanvasRenderingContext2D | null = null;
 let confetti: Confetti[] = [];

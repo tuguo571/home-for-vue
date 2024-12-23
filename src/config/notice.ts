@@ -1,17 +1,14 @@
-import type {
-  NoticeButton as BaseNoticeButton,
-  NoticeConfig as BaseNoticeConfig,
-} from "../types/notice";
+import type { NoticeButton, NoticeConfig } from "../types/notice";
 
-interface NoticeButton extends BaseNoticeButton {
+interface ExtendedNoticeButton extends NoticeButton {
   type: "primary" | "secondary" | "danger";
 }
 
-interface ExtendedNoticeConfig extends BaseNoticeConfig {
+interface ExtendedNoticeConfig extends NoticeConfig {
   enabled: boolean;
   showFireworks: boolean;
   defaultShowAfter?: number | "refresh" | null;
-  buttons: NoticeButton[];
+  buttons: ExtendedNoticeButton[];
 }
 
 export const noticeConfig: ExtendedNoticeConfig = {

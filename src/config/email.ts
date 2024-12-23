@@ -6,19 +6,14 @@ interface EmailConfig {
   publicKey: string;
 }
 
-const config = {
+export const emailConfig: EmailConfig = {
   serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID,
   templateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
   publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
 };
 
-// 初始化 EmailJS
-emailjs.init(config.publicKey);
-
-export const emailConfig: EmailConfig = {
-  serviceId: config.serviceId,
-  templateId: config.templateId,
-  publicKey: config.publicKey,
+export const initEmailJS = () => {
+  emailjs.init(emailConfig.publicKey);
 };
 
 if (

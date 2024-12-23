@@ -10,7 +10,7 @@
           class="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400"
           ref="copyrightRef"
         >
-          <span>© {{ new Date().getFullYear() }}</span>
+          <span>© {{ currentYear }}</span>
           <a
             href="https://www.mmm.sd/"
             target="_blank"
@@ -75,10 +75,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from "vue";
-import { RouterLink, useRouter } from "vue-router";
+import { ref, onMounted, onBeforeUnmount, computed } from "vue";
+import type { RouterLinkProps } from "vue-router";
+import { useRouter } from "vue-router";
 import { footerConfig } from "@/config/footer";
 import { createCopyrightGuard } from "@/utils/copyright";
+import { siteConfig } from "@/config/site";
 
 const router = useRouter();
 const footerRef = ref<HTMLElement | null>(null);
@@ -89,6 +91,8 @@ const guard = createCopyrightGuard;
 // 定期检查版权信息
 let intervalId: number;
 let randomInterval: number;
+
+const currentYear = computed(() => new Date().getFullYear());
 
 onMounted(() => {
   // 初始检查

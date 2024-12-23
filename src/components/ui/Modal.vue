@@ -13,16 +13,20 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  show: false,
   title: "",
-  width: "500px",
+  width: "400px",
   maskClosable: true,
   showClose: true,
   showFireworks: false,
 });
 
-const emit = defineEmits(["update:show"]);
+const emit = defineEmits<{
+  (e: "update:show", value: boolean): void;
+}>();
 
 const modalRef = ref<HTMLElement | null>(null);
+const showFireworks = ref(false);
 
 // 处理点击遮罩层关闭
 const handleMaskClick = (e: MouseEvent) => {
@@ -41,7 +45,7 @@ const handleKeydown = (e: KeyboardEvent) => {
 // 监听键盘事件
 watch(
   () => props.show,
-  (val) => {
+  (val: boolean) => {
     if (val) {
       document.addEventListener("keydown", handleKeydown);
     } else {
@@ -50,11 +54,10 @@ watch(
   },
 );
 
-const showFireworks = ref(false);
-
+// 监听显示状态
 watch(
   () => props.show,
-  (newVal) => {
+  (newVal: boolean) => {
     if (newVal && props.showFireworks && noticeConfig.showFireworks) {
       showFireworks.value = true;
       setTimeout(() => {

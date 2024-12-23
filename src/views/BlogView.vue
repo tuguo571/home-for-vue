@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
+import type { Ref } from "@vue/runtime-core";
 import { fetchBlogPosts } from "../utils/rss";
 import type { BlogPost } from "../types/blog";
 import PageTransition from "../components/PageTransition.vue";
 
-const posts = ref<BlogPost[]>([]);
+const posts: Ref<BlogPost[]> = ref([]);
 const loading = ref(true);
 const error = ref<string | null>(null);
 const currentPage = ref(1);
