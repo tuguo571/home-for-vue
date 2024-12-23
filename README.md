@@ -1,6 +1,9 @@
 # 个人主页项目
 
 一个使用 Vue 3 + TypeScript + Vite 构建的现代化个人主页，具有博客文章展示、项目展示、联系表单等功能。
+![image](https://github.com/user-attachments/assets/db3804ed-1133-42f4-a698-83c4fde64fc3)
+
+
 
 ## 主要特性
 
@@ -75,21 +78,13 @@ VITE_EMAILJS_SERVICE_ID=your_service_id      # EmailJS 服务 ID
 VITE_EMAILJS_TEMPLATE_ID=your_template_id    # EmailJS 模板 ID
 VITE_EMAILJS_PUBLIC_KEY=your_public_key      # EmailJS 公钥
 ```
-
-> 注意：不要将包含敏感信息的 `.env` 文件提交到代码仓库。
-
-### 环境变量说明
-
-- **站点配置**：用于设置网站的基本信息，包括标题、描述、关键词等
-- **社交媒体配置**：配置社交媒体链接和用户名
-- **主题配置**：设置网站的主题色等样式相关配置
-- **EmailJS 配置**：配置联系表单所需的 EmailJS 服务参数
-
-开发时需要：
-
-1. 复制 `.env.example` 为 `.env`
-2. 根据实际情况填写配置值
-3. 确保 `.env` 文件已被 `.gitignore` 忽略
+EmailJS 配置
+VITE_EMAILJS_SERVICE_ID=your_service_id
+VITE_EMAILJS_TEMPLATE_ID=your_template_id
+VITE_EMAILJS_PUBLIC_KEY=your_public_key
+其他配置
+VITE_GUESTBOOK_URL=your_guestbook_url
+```
 
 ## 开发和构建
 
