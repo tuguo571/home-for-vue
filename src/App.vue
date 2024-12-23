@@ -10,9 +10,14 @@ import Modal from "./components/ui/Modal.vue";
 import { noticeConfig } from "./config/notice";
 import type { NoticeButton } from "./types/notice";
 import { siteConfig } from "./config/site";
+import { siteInfo } from "./config/site-info";
+import { printConsoleInfo } from "@/utils/console";
 
 const route = useRoute();
 const router = useRouter();
+
+// 是否为开发环境
+const isDev = import.meta.env.DEV;
 
 // 监听路由变化更新页面标题和描述
 watch(
@@ -95,19 +100,49 @@ const checkNotice = () => {
     return;
   }
 
+  // 如果是数字时间戳，检查是否已过期
+  if (nextShowTime !== "refresh") {
+    const showTime = Number(nextShowTime);
+    if (!isNaN(showTime) && Date.now() < showTime) {
+      return;
+    }
+  }
+
   // 如果是 refresh 或者时间已过，显示公告
-  if (nextShowTime === "refresh" || Date.now() >= Number(nextShowTime)) {
+  if (nextShowTime === "refresh") {
     showNotice.value = true;
   }
 };
 
+// 清除公告缓存
+const clearNoticeCache = () => {
+  localStorage.removeItem(`notice_${noticeConfig.id}`);
+  checkNotice();
+};
+
 onMounted(() => {
   checkNotice();
+  // 打印控制台信息
+  printConsoleInfo({
+    text: siteInfo.text,
+    version: siteInfo.version,
+    link: siteInfo.link,
+  });
 });
 </script>
 
 <template>
   <div class="min-h-screen flex flex-col">
+    <!-- 开发环境工具栏 -->
+    <div v-if="isDev" class="fixed bottom-4 right-4 z-50">
+      <button
+        class="px-4 py-2 bg-red-500 text-white rounded-lg shadow-lg hover:bg-red-600 transition-colors"
+        @click="clearNoticeCache"
+      >
+        清除公告缓存
+      </button>
+    </div>
+
     <TheHeader />
     <main class="flex-grow pt-16 md:pt-20">
       <router-view v-slot="{ Component }">

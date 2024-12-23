@@ -3,19 +3,29 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+/* 添加字体定义 */
+@font-face {
+  font-family: "LXWK";
+  font-weight: 100 900;
+  font-display: swap;
+  font-style: normal;
+  src: url("https://cdn.jsdmirror.com/gh/acanyo/mmm.sd@master/assets/font/lxwk.woff2")
+    format("woff2");
+}
+
 @layer base {
   html {
+    font-family:
+      "LXWK",
+      system-ui,
+      -apple-system,
+      sans-serif;
     scroll-behavior: smooth;
     -webkit-tap-highlight-color: transparent;
   }
 
   body {
     @apply bg-main text-primary antialiased;
-    font-family:
-      "Inter var",
-      system-ui,
-      -apple-system,
-      sans-serif;
   }
 
   /* 移动端优化 */
