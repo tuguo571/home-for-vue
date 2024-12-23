@@ -2,42 +2,54 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <!-- 网站图标配置 -->
-    <link rel="icon" type="image/png" href="/logo.png" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" href="/logo.png" />
-
-    <!-- 基本 meta 配置 -->
+    <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#4F46E5" />
-    <meta name="robots" content="index,follow" />
-    <meta name="googlebot" content="index,follow" />
-    <meta name="revisit-after" content="7 days" />
-    <meta name="generator" content="Vite" />
 
-    <!-- SEO Meta 标签 -->
-    <meta name="description" content="__DESCRIPTION__" />
-    <meta name="keywords" content="__KEYWORDS__" />
-    <meta name="author" content="__AUTHOR__" />
+    <!-- 基础 Meta 标签 -->
+    <title>%VITE_APP_TITLE%</title>
+    <meta name="description" content="%VITE_APP_DESCRIPTION%" />
+    <meta name="keywords" content="%VITE_APP_KEYWORDS%" />
+    <meta name="author" content="%VITE_APP_AUTHOR%" />
 
-    <!-- Open Graph / Facebook 分享配置 -->
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="__URL__" />
-    <meta property="og:title" content="__TITLE__" />
-    <meta property="og:description" content="__DESCRIPTION__" />
-    <meta property="og:image" content="__LOGO__" />
+    <meta property="og:url" content="%VITE_APP_URL%" />
+    <meta property="og:title" content="%VITE_APP_TITLE%" />
+    <meta property="og:description" content="%VITE_APP_DESCRIPTION%" />
+    <meta property="og:image" content="%VITE_APP_LOGO%" />
     <meta property="og:locale" content="zh_CN" />
-    <meta property="og:site_name" content="__SITE_NAME__" />
+    <meta property="og:site_name" content="%VITE_APP_TITLE%" />
 
-    <!-- Twitter 分享配置 -->
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="__TITLE__" />
-    <meta name="twitter:description" content="__DESCRIPTION__" />
-    <meta name="twitter:image" content="__LOGO__" />
+    <meta name="twitter:site" content="%VITE_APP_TWITTER%" />
+    <meta name="twitter:title" content="%VITE_APP_TITLE%" />
+    <meta name="twitter:description" content="%VITE_APP_DESCRIPTION%" />
+    <meta name="twitter:image" content="%VITE_APP_LOGO%" />
 
-    <!-- 规范链接 -->
-    <link rel="canonical" href="__URL__" />
-    <title>个人作品集 | Java后端开发</title>
+    <!-- 主题色 -->
+    <meta name="theme-color" content="%VITE_APP_THEME_COLOR%" />
+
+    <!-- Schema.org 结构化数据 -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "%VITE_APP_TITLE%",
+        "url": "%VITE_APP_URL%",
+        "logo": "%VITE_APP_LOGO%",
+        "sameAs": ["%VITE_APP_GITHUB%", "%VITE_APP_TWITTER_URL%"]
+      }
+    </script>
+
+    <!-- 字体预加载 -->
+    <link
+      rel="preload"
+      href="https://rsms.me/inter/font-files/Inter-roman.var.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
   </head>
   <body>
     <div id="app"></div>

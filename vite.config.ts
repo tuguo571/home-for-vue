@@ -3,6 +3,7 @@ import vue from "@vitejs/plugin-vue";
 import path from "path";
 import viteCompression from "vite-plugin-compression";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
+import { siteConfig } from "./src/config/site";
 
 export default defineConfig({
   base: "/",
@@ -102,5 +103,9 @@ export default defineConfig({
         },
       },
     },
+  },
+  define: {
+    __VUE_OPTIONS_API__: true,
+    __VUE_PROD_DEVTOOLS__: false,
   },
 });

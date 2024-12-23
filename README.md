@@ -50,16 +50,46 @@ src/
 
 ## 环境变量
 
-项目使用以下环境变量：
+项目使用环境变量来管理配置。复制 `.env.example` 为 `.env`，并填入实际的值：
 
+```env
+# 站点配置
+VITE_SITE_URL=https://example.com        # 站点 URL
+VITE_APP_TITLE=Your Site Title          # 站点标题
+VITE_APP_DESCRIPTION=Your Description    # 站点描述
+VITE_APP_KEYWORDS=keyword1,keyword2      # SEO 关键词
+VITE_APP_AUTHOR=Your Name               # 作者名称
+VITE_APP_URL=https://example.com        # 站点 URL
+VITE_APP_LOGO=https://example.com/logo  # 站点 Logo
+
+# 社交媒体配置
+VITE_APP_TWITTER=@your_twitter          # Twitter 用户名
+VITE_APP_TWITTER_URL=https://twitter.com/your_twitter  # Twitter 链接
+VITE_APP_GITHUB=https://github.com/your_github        # GitHub 链接
+
+# 主题配置
+VITE_APP_THEME_COLOR=#4F46E5           # 主题色
+
+# EmailJS 配置
+VITE_EMAILJS_SERVICE_ID=your_service_id      # EmailJS 服务 ID
+VITE_EMAILJS_TEMPLATE_ID=your_template_id    # EmailJS 模板 ID
+VITE_EMAILJS_PUBLIC_KEY=your_public_key      # EmailJS 公钥
 ```
-EmailJS ���置
-VITE_EMAILJS_SERVICE_ID=your_service_id
-VITE_EMAILJS_TEMPLATE_ID=your_template_id
-VITE_EMAILJS_PUBLIC_KEY=your_public_key
-其他配置
-VITE_GUESTBOOK_URL=your_guestbook_url
-```
+
+> 注意：不要将包含敏感信息的 `.env` 文件提交到代码仓库。
+
+### 环境变量说明
+
+- **站点配置**：用于设置网站的基本信息，包括标题、描述、关键词等
+- **社交媒体配置**：配置社交媒体链接和用户名
+- **主题配置**：设置网站的主题色等样式相关配置
+- **EmailJS 配置**：配置联系表单所需的 EmailJS 服务参数
+
+开发时需要：
+
+1. 复制 `.env.example` 为 `.env`
+2. 根据实际情况填写配置值
+3. 确保 `.env` 文件已被 `.gitignore` 忽略
 
 ## 开发和构建
 
