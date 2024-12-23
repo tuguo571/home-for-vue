@@ -1,7 +1,8 @@
 # 个人主页项目
 
 一个使用 Vue 3 + TypeScript + Vite 构建的现代化个人主页，具有博客文章展示、项目展示、联系表单等功能。
-![Uploading image.png…]()
+![image](https://github.com/user-attachments/assets/db3804ed-1133-42f4-a698-83c4fde64fc3)
+
 
 
 ## 主要特性
