@@ -2,6 +2,10 @@
 
 一个使用 Vue 3 + TypeScript + Vite 构建的现代化个人主页，具有博客文章展示、项目展示、联系表单等功能。
 
+# 💬交流
+![群.png](https://www.lik.cc/upload/iShot_2025-03-03_16.03.00.png)
+
+
 ## 特性
 
 - 🚀 使用 Vue 3 + TypeScript + Vite 构建
