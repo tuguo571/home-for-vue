@@ -93,7 +93,7 @@ const structuredData = {
               >
             </span>
             <span class="block opacity-0 animate-fade-in-delay-2">
-              我是 <span class="gradient-name">Handsome</span>
+              我是 <span class="gradient-name">Moinkhao</span>
             </span>
           </h1>
         </PageTransition>
