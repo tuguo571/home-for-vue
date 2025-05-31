@@ -1,12 +1,12 @@
 export const siteConfig = {
   // 基本信息
-  name: "云小枫", // 作者名称
+  name: "MoinkHao", // 作者名称
   title: "CV工程师", // 职位头衔
   siteName: "碎碎记", // 网站标题
   siteDescription:
     "专注于Java、Spring Boot、微服务等后端技术开发的个人作品集网站", // 网站描述
   siteKeywords: "Spring Boot,Vue,个人作品集,技术博客", // SEO关键词
-  author: "moinkhao", // 作者信息
+  author: "MoinkHao", // 作者信息
 
   // 图片资源配置
   images: {
