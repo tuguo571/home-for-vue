@@ -1,12 +1,12 @@
 export const siteConfig = {
   // 基本信息
-  name: "Handsome", // 作者名称
-  title: "Java后端开发工程师", // 职位头衔
-  siteName: "Handsome | Java后端开发工程师", // 网站标题
+  name: "云小枫", // 作者名称
+  title: "", // 职位头衔
+  siteName: "碎碎记", // 网站标题
   siteDescription:
     "专注于Java、Spring Boot、微服务等后端技术开发的个人作品集网站", // 网站描述
-  siteKeywords: "Java开发,Spring Boot,微服务,后端开发,个人作品集,技术博客", // SEO关键词
-  author: "Handsome", // 作者信息
+  siteKeywords: "Spring Boot,Vue,个人作品集,技术博客", // SEO关键词
+  author: "moinkhao", // 作者信息
 
   // 图片资源配置
   images: {
@@ -17,7 +17,7 @@ export const siteConfig = {
   },
 
   // 个性化配置
-  slogan: "生活原本沉闷，但跑起来就有风。", // 个性签名
+  slogan: "横看成岭侧成峰，远近高低各不同", // 个性签名
   skills: ["Java", "Spring Boot", "MySQL", "Redis", "Docker", "Git"], // 技能标签
 
   // SEO 相关配置
@@ -28,13 +28,13 @@ export const siteConfig = {
 
   // Schema.org 结构化数据
   organization: {
-    name: "Handsome's Portfolio", // 组织名称
+    name: "moinkhao's Portfolio", // 组织名称
     logo: "https://www.mmm.sd/upload/logo.png", // 组织Logo
   },
 
   // 社交媒体链接
   social: {
-    github: "https://github.com/acanyo", // GitHub主页
-    email: "30819792@qq.com", // 联系邮箱
+    github: "https://github.com/tuguo571", // GitHub主页
+    email: "yf@linux.do", // 联系邮箱
   },
 };
