@@ -24,12 +24,12 @@ export const footerConfig: FooterConfig = {
 
     {
       text: "博客",
-      href: "https://www.mmm.sd",
+      href: "https://note.tuguo.me",
       target: "_blank",
     },
     {
       text: "GitHub",
-      href: "https://github.com/acanyo",
+      href: "https://github.com/tuguo571",
       target: "_blank",
     },
   ],
