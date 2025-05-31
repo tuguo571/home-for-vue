@@ -66,7 +66,7 @@ const toggleMenu = () => {
           <span
             class="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent bg-[length:200%_auto] hover:animate-gradient"
           >
-            Handsome
+            Moinkhao
           </span>
         </router-link>
 
