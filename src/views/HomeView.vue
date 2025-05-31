@@ -72,7 +72,7 @@ const structuredData = {
         <div class="mb-6">
           <div class="relative inline-block avatar-container">
             <img
-              src="https://q.qlogo.cn/headimg_dl?dst_uin=30819792&spec=640&img_type=jpg"
+              src="https://im.gurl.eu.org/file/AgACAgEAAxkDAAJmFWg7OTjXPHmYQVKAgoX_eM6KdsCKAAK7rjEb-FTYRT7tMEFR_S4cAQADAgADeAADNgQ.png"
               alt="头像"
               class="w-24 h-24 md:w-32 md:h-32 rounded-full shadow-xl border-4 border-white dark:border-gray-700 transition-all duration-300 avatar"
             />
