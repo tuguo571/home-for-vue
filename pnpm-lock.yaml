@@ -107,7 +107,7 @@ importers:
         version: 0.6.1(vite@5.4.11(@types/node@20.17.10)(terser@5.37.0))
       vue-tsc:
         specifier: ^1.8.25
-        version: 1.8.27(typescript@5.3.3)
+        version: 2.0.29(typescript@5.3.3)
 
 packages:
 
