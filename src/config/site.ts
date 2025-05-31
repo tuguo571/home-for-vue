@@ -2,7 +2,7 @@ export const siteConfig = {
   // 基本信息
   name: "MoinkHao", // 作者名称
   title: "CV工程师", // 职位头衔
-  siteName: "碎碎记", // 网站标题
+  siteName: "云枫的碎碎记", // 网站标题
   siteDescription:
     "专注于Java、Spring Boot、微服务等后端技术开发的个人作品集网站", // 网站描述
   siteKeywords: "Spring Boot,Vue,个人作品集,技术博客", // SEO关键词
@@ -23,7 +23,7 @@ export const siteConfig = {
   // SEO 相关配置
   language: "zh-CN", // 网站语言
   themeColor: "#4F46E5", // 主题色
-  twitterHandle: "", // Twitter账号
+  twitterHandle: "@111", // Twitter账号
   githubHandle: "tuguo571", // GitHub账号
 
   // Schema.org 结构化数据
