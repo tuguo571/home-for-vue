@@ -1,7 +1,7 @@
 export const siteConfig = {
   // 基本信息
   name: "云小枫", // 作者名称
-  title: "", // 职位头衔
+  title: "CV工程师", // 职位头衔
   siteName: "碎碎记", // 网站标题
   siteDescription:
     "专注于Java、Spring Boot、微服务等后端技术开发的个人作品集网站", // 网站描述
@@ -18,13 +18,13 @@ export const siteConfig = {
 
   // 个性化配置
   slogan: "横看成岭侧成峰，远近高低各不同", // 个性签名
-  skills: ["Java", "Spring Boot", "MySQL", "Redis", "Docker", "Git"], // 技能标签
+  skills: ["Vue", "Spring Boot", "MySQL", "Redis", "Docker", "Git"], // 技能标签
 
   // SEO 相关配置
   language: "zh-CN", // 网站语言
   themeColor: "#4F46E5", // 主题色
-  twitterHandle: "@hanmdsomeX", // Twitter账号
-  githubHandle: "acanyo", // GitHub账号
+  twitterHandle: "", // Twitter账号
+  githubHandle: "tuguo571", // GitHub账号
 
   // Schema.org 结构化数据
   organization: {
