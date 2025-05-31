@@ -4,7 +4,7 @@ import PageTransition from "@/components/PageTransition.vue";
 import { config } from "@/config";
 import { siteConfig } from "@/config/site";
 
-const titles = ref(["Java后端工程师", "热爱编程", "热爱生活"]);
+const titles = ref(["CV工程师", "热爱编程", "热爱生活"]);
 const currentTitleIndex = ref(0);
 const isWaving = ref(false);
 const slogan = ref("");
