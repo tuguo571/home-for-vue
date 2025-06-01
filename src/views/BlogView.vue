@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import type { Ref } from "vue";
-import { fetchBlogPosts } from "../utils/rss";
+import { fetchLocalBlogPosts } from "../utils/markdown";
 import type { BlogPost } from "../types/blog";
 import PageTransition from "../components/PageTransition.vue";
 
@@ -10,6 +10,10 @@ const loading = ref(true);
 const error = ref<string | null>(null);
 const currentPage = ref(1);
 const postsPerPage = 6;
+
+// 文章详情模态框
+const showModal = ref(false);
+const selectedPost = ref<BlogPost | null>(null);
 
 // 计算总页数
 const totalPages = computed(() => Math.ceil(posts.value.length / postsPerPage));
@@ -55,15 +59,36 @@ function nextPage() {
   }
 }
 
-onMounted(async () => {
+// 加载博客文章
+async function loadBlogPosts() {
   try {
     loading.value = true;
-    posts.value = await fetchBlogPosts();
+    posts.value = await fetchLocalBlogPosts();
   } catch (e) {
     error.value = e instanceof Error ? e.message : "获取博客文章失败";
   } finally {
     loading.value = false;
   }
+}
+
+// 显示文章详情
+function showPostContent(post: BlogPost) {
+  selectedPost.value = post;
+  showModal.value = true;
+  // 防止背景滚动
+  document.body.style.overflow = 'hidden';
+}
+
+// 关闭模态框
+function closeModal() {
+  showModal.value = false;
+  selectedPost.value = null;
+  // 恢复背景滚动
+  document.body.style.overflow = 'auto';
+}
+
+onMounted(() => {
+  loadBlogPosts();
 });
 
 // 格式化日期
@@ -103,7 +128,7 @@ function formatDate(date: Date): string {
       <div v-else-if="error" class="text-center py-20">
         <p class="text-red-500 text-lg mb-4">{{ error }}</p>
         <button
-          @click="fetchBlogPosts"
+          @click="loadBlogPosts"
           class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-all transform hover:scale-105"
         >
           重试
@@ -144,13 +169,12 @@ function formatDate(date: Date): string {
                 <h2
                   class="text-xl font-bold mb-3 hover:text-primary transition-colors line-clamp-2"
                 >
-                  <a
-                    :href="post.link"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    @click="showPostContent(post)"
+                    class="text-left w-full hover:text-primary transition-colors"
                   >
                     {{ post.title }}
-                  </a>
+                  </button>
                 </h2>
                 <p
                   class="text-secondary line-clamp-3 mb-4 text-sm leading-relaxed"
@@ -158,10 +182,8 @@ function formatDate(date: Date): string {
                 ></p>
               </div>
               <div class="px-6 py-4 bg-secondary border-t border-light">
-                <a
-                  :href="post.link"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  @click="showPostContent(post)"
                   class="inline-flex items-center text-primary hover:text-primary-dark transition-colors group"
                 >
                   阅读全文
@@ -178,7 +200,7 @@ function formatDate(date: Date): string {
                       d="M13 7l5 5m0 0l-5 5m5-5H6"
                     />
                   </svg>
-                </a>
+                </button>
               </div>
             </article>
           </PageTransition>
@@ -272,6 +294,49 @@ function formatDate(date: Date): string {
         <p class="text-gray-500 dark:text-gray-400 text-lg">暂无博客文章</p>
       </div>
     </div>
+
+    <!-- 文章详情模态框 -->
+    <div
+      v-if="showModal && selectedPost"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50"
+      @click="closeModal"
+    >
+      <div
+        class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
+        @click.stop
+      >
+        <!-- 模态框头部 -->
+        <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+          <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+              {{ selectedPost.title }}
+            </h1>
+            <div class="flex items-center mt-2 space-x-4 text-sm text-gray-500 dark:text-gray-400">
+              <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 rounded">
+                {{ selectedPost.category }}
+              </span>
+              <time>{{ formatDate(selectedPost.date) }}</time>
+            </div>
+          </div>
+          <button
+            @click="closeModal"
+            class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- 模态框内容 -->
+        <div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+          <div
+            class="markdown-content"
+            v-html="selectedPost.content"
+          ></div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -309,5 +374,102 @@ function formatDate(date: Date): string {
   100% {
     background-position: 0% 50%;
   }
+}
+
+/* Markdown 内容样式 */
+.markdown-content {
+  line-height: 1.7;
+  color: var(--color-text-primary);
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: var(--color-text-primary);
+}
+
+.markdown-content h1 {
+  font-size: 2rem;
+  border-bottom: 2px solid var(--color-border-light);
+  padding-bottom: 0.5rem;
+}
+
+.markdown-content h2 {
+  font-size: 1.5rem;
+  border-bottom: 1px solid var(--color-border-light);
+  padding-bottom: 0.3rem;
+}
+
+.markdown-content h3 {
+  font-size: 1.25rem;
+}
+
+.markdown-content p {
+  margin-bottom: 1rem;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.markdown-content li {
+  margin-bottom: 0.5rem;
+}
+
+.markdown-content strong {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.markdown-content code {
+  background-color: var(--color-bg-secondary);
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-family: 'Courier New', monospace;
+}
+
+.markdown-content pre {
+  background-color: var(--color-bg-secondary);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin-bottom: 1rem;
+}
+
+.markdown-content pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+.markdown-content blockquote {
+  border-left: 4px solid var(--color-primary);
+  padding-left: 1rem;
+  margin: 1rem 0;
+  font-style: italic;
+  color: var(--color-text-secondary);
+}
+
+.markdown-content a {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.markdown-content a:hover {
+  color: var(--color-primary-dark);
+}
+
+.markdown-content hr {
+  border: none;
+  border-top: 1px solid var(--color-border-light);
+  margin: 2rem 0;
 }
 </style>
