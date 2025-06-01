@@ -5,4 +5,5 @@ export interface BlogPost {
   description: string;
   category?: string;
   image?: string;
+  content?: string;
 }
