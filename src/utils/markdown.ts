@@ -1,4 +1,3 @@
-import { marked } from 'marked'
 import type { BlogPost } from '../types/blog'
 
 // 博客文章的元数据接口
@@ -36,37 +35,155 @@ function parseFrontMatter(content: string): { metadata: BlogMetadata; content: s
   }
 }
 
-// 简单的markdown转HTML函数（基础版本）
-function simpleMarkdownToHtml(markdown: string): string {
-  return markdown
-    // 标题
-    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-    // 粗体
-    .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
-    // 斜体
-    .replace(/\*(.*)\*/gim, '<em>$1</em>')
-    // 代码块
-    .replace(/```([\s\S]*?)```/gim, '<pre><code>$1</code></pre>')
-    // 行内代码
-    .replace(/`([^`]*)`/gim, '<code>$1</code>')
-    // 链接
-    .replace(/\[([^\]]*)\]\(([^\)]*)\)/gim, '<a href="$2">$1</a>')
-    // 无序列表
-    .replace(/^\- (.*$)/gim, '<li>$1</li>')
-    .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
-    // 段落
-    .replace(/\n\n/gim, '</p><p>')
-    .replace(/^(?!<[h|u|p|l])(.*)$/gim, '<p>$1</p>')
-    // 清理多余的p标签
-    .replace(/<p><\/p>/gim, '')
-    .replace(/<p>(<h[1-6]>)/gim, '$1')
-    .replace(/(<\/h[1-6]>)<\/p>/gim, '$1')
-    .replace(/<p>(<ul>)/gim, '$1')
-    .replace(/(<\/ul>)<\/p>/gim, '$1')
-    .replace(/<p>(<pre>)/gim, '$1')
-    .replace(/(<\/pre>)<\/p>/gim, '$1')
+// 改进的markdown转HTML函数
+function markdownToHtml(markdown: string): string {
+  // 预处理：标准化换行符
+  let content = markdown.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+
+  // 分割成行进行处理
+  const lines = content.split('\n')
+  const processedLines: string[] = []
+  let inCodeBlock = false
+  let codeBlockLanguage = ''
+  let codeBlockContent: string[] = []
+  let inList = false
+  let listItems: string[] = []
+  let inBlockquote = false
+  let blockquoteLines: string[] = []
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
+    const trimmedLine = line.trim()
+
+    // 处理代码块
+    if (trimmedLine.startsWith('```')) {
+      if (inCodeBlock) {
+        // 结束代码块
+        processedLines.push(`<pre><code class="language-${codeBlockLanguage}">${escapeHtml(codeBlockContent.join('\n'))}</code></pre>`)
+        inCodeBlock = false
+        codeBlockLanguage = ''
+        codeBlockContent = []
+      } else {
+        // 开始代码块
+        codeBlockLanguage = trimmedLine.substring(3).trim() || 'text'
+        inCodeBlock = true
+        codeBlockContent = []
+      }
+      continue
+    }
+
+    if (inCodeBlock) {
+      codeBlockContent.push(line)
+      continue
+    }
+
+    // 处理引用块
+    if (trimmedLine.startsWith('>')) {
+      if (!inBlockquote) {
+        inBlockquote = true
+        blockquoteLines = []
+      }
+      blockquoteLines.push(trimmedLine.substring(1).trim())
+      continue
+    } else if (inBlockquote) {
+      // 结束引用块
+      processedLines.push(`<blockquote><p>${blockquoteLines.join('<br>')}</p></blockquote>`)
+      inBlockquote = false
+      blockquoteLines = []
+      // 继续处理当前行
+    }
+
+    // 处理分割线
+    if (trimmedLine === '---' || trimmedLine === '***' || trimmedLine === '___') {
+      processedLines.push('<hr>')
+      continue
+    }
+
+    // 处理标题
+    const headerMatch = trimmedLine.match(/^(#{1,6})\s+(.+)$/)
+    if (headerMatch) {
+      const level = headerMatch[1].length
+      const title = processInlineFormatting(headerMatch[2])
+      processedLines.push(`<h${level}>${title}</h${level}>`)
+      continue
+    }
+
+    // 处理列表
+    const unorderedListMatch = trimmedLine.match(/^[-*+]\s+(.+)$/)
+    const orderedListMatch = trimmedLine.match(/^\d+\.\s+(.+)$/)
+
+    if (unorderedListMatch || orderedListMatch) {
+      const listContent = unorderedListMatch ? unorderedListMatch[1] : orderedListMatch![1]
+      const isOrdered = !!orderedListMatch
+
+      if (!inList) {
+        inList = true
+        listItems = []
+        // 记录列表类型
+        listItems.push(isOrdered ? 'ol' : 'ul')
+      }
+      listItems.push(`<li>${processInlineFormatting(listContent)}</li>`)
+      continue
+    } else if (inList) {
+      // 结束列表
+      const listType = listItems[0] // 第一个元素是列表类型
+      const items = listItems.slice(1) // 其余是列表项
+      processedLines.push(`<${listType}>${items.join('')}</${listType}>`)
+      inList = false
+      listItems = []
+    }
+
+    // 处理空行
+    if (trimmedLine === '') {
+      processedLines.push('')
+      continue
+    }
+
+    // 处理普通段落
+    processedLines.push(`<p>${processInlineFormatting(trimmedLine)}</p>`)
+  }
+
+  // 处理未结束的块
+  if (inList && listItems.length > 1) {
+    const listType = listItems[0] // 第一个元素是列表类型
+    const items = listItems.slice(1) // 其余是列表项
+    processedLines.push(`<${listType}>${items.join('')}</${listType}>`)
+  }
+
+  if (inBlockquote && blockquoteLines.length > 0) {
+    processedLines.push(`<blockquote><p>${blockquoteLines.join('<br>')}</p></blockquote>`)
+  }
+
+  return processedLines.join('\n')
+}
+
+// 处理行内格式
+function processInlineFormatting(text: string): string {
+  // 处理行内代码（优先级最高）
+  text = text.replace(/`([^`]+)`/g, '<code>$1</code>')
+
+  // 处理链接
+  text = text.replace(/\[([^\]]*)\]\(([^\)]*)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+
+  // 处理粗体
+  text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+
+  // 处理斜体
+  text = text.replace(/\*(.*?)\*/g, '<em>$1</em>')
+
+  return text
+}
+
+// HTML转义函数
+function escapeHtml(text: string): string {
+  const htmlEscapes: { [key: string]: string } = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }
+  return text.replace(/[&<>"']/g, (match) => htmlEscapes[match])
 }
 
 // 获取所有博客文章
@@ -86,7 +203,7 @@ export const fetchLocalBlogPosts = async (): Promise<BlogPost[]> => {
         const { metadata, content: markdownContent } = parseFrontMatter(content)
 
         // 将markdown转换为HTML
-        const htmlContent = typeof marked === 'function' ? await marked(markdownContent) : simpleMarkdownToHtml(markdownContent)
+        const htmlContent = markdownToHtml(markdownContent)
 
         // 创建博客文章对象
         const post: BlogPost = {
