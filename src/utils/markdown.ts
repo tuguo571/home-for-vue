@@ -1,3 +1,4 @@
+import { marked } from 'marked'
 import type { BlogPost } from '../types/blog'
 
 // 博客文章的元数据接口
@@ -35,74 +36,80 @@ function parseFrontMatter(content: string): { metadata: BlogMetadata; content: s
   }
 }
 
-// 模拟博客数据（简化版本，避免动态导入问题）
-const mockBlogPosts: BlogPost[] = [
-  {
-    title: "TypeScript 实用指南",
-    link: "#/blog/typescript-guide",
-    date: new Date("2024-01-25"),
-    description: "TypeScript的基础知识和实用技巧，帮助你更好地使用类型系统",
-    category: "编程语言",
-    content: `
-      <h1>TypeScript 实用指南</h1>
-      <p>TypeScript 为 JavaScript 添加了静态类型检查，让我们能够在开发阶段就发现潜在的错误。</p>
-      <h2>基础类型</h2>
-      <pre><code>// 基本类型
-let name: string = "张三"
-let age: number = 25
-let isStudent: boolean = true</code></pre>
-      <p>TypeScript 的类型系统虽然有学习成本，但它能够提前发现错误、提供更好的IDE支持、让代码更加自文档化。</p>
-    `
-  },
-  {
-    title: "Vue 3 开发技巧分享",
-    link: "#/blog/vue3-tips",
-    date: new Date("2024-01-20"),
-    description: "分享一些Vue 3开发中的实用技巧和最佳实践",
-    category: "前端开发",
-    content: `
-      <h1>Vue 3 开发技巧分享</h1>
-      <p>Vue 3 带来了许多新特性和改进，今天分享一些我在实际开发中总结的技巧。</p>
-      <h2>Composition API 的优势</h2>
-      <p>Composition API 是 Vue 3 的核心特性之一，它提供了更好的逻辑复用和类型推导。</p>
-      <pre><code>&lt;script setup lang="ts"&gt;
-import { ref, computed, onMounted } from 'vue'
-
-const count = ref(0)
-const doubleCount = computed(() => count.value * 2)
-&lt;/script&gt;</code></pre>
-      <p>希望这些技巧对你的Vue 3开发有所帮助！</p>
-    `
-  },
-  {
-    title: "欢迎来到我的博客",
-    link: "#/blog/welcome",
-    date: new Date("2024-01-15"),
-    description: "这是我的第一篇博客文章，欢迎大家来到我的个人网站！",
-    category: "随笔",
-    content: `
-      <h1>欢迎来到我的博客</h1>
-      <p>大家好！欢迎来到我的个人博客。这是我在这个网站上发布的第一篇文章。</p>
-      <h2>关于这个博客</h2>
-      <p>这个博客将会分享我在技术学习和项目开发过程中的心得体会，包括但不限于：</p>
-      <ul>
-        <li><strong>前端开发</strong> - Vue.js、React、TypeScript等</li>
-        <li><strong>后端技术</strong> - Node.js、Python、数据库等</li>
-        <li><strong>工具分享</strong> - 开发工具、效率工具推荐</li>
-      </ul>
-      <p>感谢你的阅读，希望我的分享对你有所帮助！</p>
-    `
-  }
-]
+// 简单的markdown转HTML函数（基础版本）
+function simpleMarkdownToHtml(markdown: string): string {
+  return markdown
+    // 标题
+    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+    // 粗体
+    .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
+    // 斜体
+    .replace(/\*(.*)\*/gim, '<em>$1</em>')
+    // 代码块
+    .replace(/```([\s\S]*?)```/gim, '<pre><code>$1</code></pre>')
+    // 行内代码
+    .replace(/`([^`]*)`/gim, '<code>$1</code>')
+    // 链接
+    .replace(/\[([^\]]*)\]\(([^\)]*)\)/gim, '<a href="$2">$1</a>')
+    // 无序列表
+    .replace(/^\- (.*$)/gim, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+    // 段落
+    .replace(/\n\n/gim, '</p><p>')
+    .replace(/^(?!<[h|u|p|l])(.*)$/gim, '<p>$1</p>')
+    // 清理多余的p标签
+    .replace(/<p><\/p>/gim, '')
+    .replace(/<p>(<h[1-6]>)/gim, '$1')
+    .replace(/(<\/h[1-6]>)<\/p>/gim, '$1')
+    .replace(/<p>(<ul>)/gim, '$1')
+    .replace(/(<\/ul>)<\/p>/gim, '$1')
+    .replace(/<p>(<pre>)/gim, '$1')
+    .replace(/(<\/pre>)<\/p>/gim, '$1')
+}
 
 // 获取所有博客文章
 export const fetchLocalBlogPosts = async (): Promise<BlogPost[]> => {
-  // 模拟异步加载
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(mockBlogPosts)
-    }, 500)
-  })
+  try {
+    const posts: BlogPost[] = []
+
+    // 导入所有markdown文件
+    const modules = import.meta.glob('../assets/blogs/*.md', { as: 'raw' })
+
+    for (const path in modules) {
+      try {
+        const content = await modules[path]()
+        const filename = path.split('/').pop() || ''
+
+        // 解析前置元数据和内容
+        const { metadata, content: markdownContent } = parseFrontMatter(content)
+
+        // 将markdown转换为HTML
+        const htmlContent = typeof marked === 'function' ? await marked(markdownContent) : simpleMarkdownToHtml(markdownContent)
+
+        // 创建博客文章对象
+        const post: BlogPost = {
+          title: metadata.title,
+          link: `#/blog/${filename.replace('.md', '')}`,
+          date: new Date(metadata.date),
+          description: metadata.description,
+          category: metadata.category,
+          content: htmlContent
+        }
+
+        posts.push(post)
+      } catch (error) {
+        console.warn(`Failed to load blog post from ${path}:`, error)
+      }
+    }
+
+    // 按日期倒序排列
+    return posts.sort((a, b) => b.date.getTime() - a.date.getTime())
+  } catch (error) {
+    console.error('Failed to fetch local blog posts:', error)
+    return []
+  }
 }
 
 // 根据文件名获取单篇博客文章
