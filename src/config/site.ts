@@ -18,7 +18,7 @@ export const siteConfig = {
 
   // 个性化配置
   slogan: "横看成岭侧成峰，远近高低各不同", // 个性签名
-  skills: ["Vue", "Spring Boot", "MySQL", "Redis", "Docker", "Git"], // 技能标签
+  skills: ["Vue", "Spring Boot", "MySQL", "Docker", "Git"], // 技能标签
 
   // SEO 相关配置
   language: "zh-CN", // 网站语言
