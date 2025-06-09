@@ -10,10 +10,10 @@ export const siteConfig = {
 
   // 图片资源配置
   images: {
-    logo: "https://www.mmm.sd/upload/logo.png", // 网站Logo
-    icon: "https://www.mmm.sd/upload/logo.png", // 网站图标
-    avatar: "https://www.mmm.sd/upload/logo.png", // 个人头像
-    ogImage: "https://www.mmm.sd/upload/logo.png", // 社交分享图片
+    logo: "https://im.gurl.eu.org/file/AgACAgEAAxkDAAJmFWg7OTjXPHmYQVKAgoX_eM6KdsCKAAK7rjEb-FTYRT7tMEFR_S4cAQADAgADeAADNgQ.png", // 网站Logo
+    icon: "https://im.gurl.eu.org/file/AgACAgEAAxkDAAJmFWg7OTjXPHmYQVKAgoX_eM6KdsCKAAK7rjEb-FTYRT7tMEFR_S4cAQADAgADeAADNgQ.png", // 网站图标
+    avatar: "https://im.gurl.eu.org/file/AgACAgEAAxkDAAJmFWg7OTjXPHmYQVKAgoX_eM6KdsCKAAK7rjEb-FTYRT7tMEFR_S4cAQADAgADeAADNgQ.png", // 个人头像
+    ogImage: "https://im.gurl.eu.org/file/AgACAgEAAxkDAAJmFWg7OTjXPHmYQVKAgoX_eM6KdsCKAAK7rjEb-FTYRT7tMEFR_S4cAQADAgADeAADNgQ.png", // 社交分享图片
   },
 
   // 个性化配置
