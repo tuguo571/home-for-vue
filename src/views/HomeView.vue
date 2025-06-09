@@ -128,10 +128,10 @@ const structuredData = {
         <PageTransition name="slide-left">
           <div class="flex flex-col sm:flex-row gap-5 justify-center">
             <router-link
-              to="/projects"
+              to="/blog"
               class="btn-primary hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
             >
-              查看作品
+              查看博客
             </router-link>
             <router-link
               to="/contact"
