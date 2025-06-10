@@ -59,7 +59,8 @@ function markdownToHtml(markdown: string): string {
     if (trimmedLine.startsWith('```')) {
       if (inCodeBlock) {
         // 结束代码块
-        processedLines.push(`<pre><code class="language-${codeBlockLanguage}">${escapeHtml(codeBlockContent.join('\n'))}</code></pre>`)
+        const languageLabel = codeBlockLanguage || 'text'
+        processedLines.push(`<pre data-language="${languageLabel}"><code class="language-${codeBlockLanguage}">${escapeHtml(codeBlockContent.join('\n'))}</code></pre>`)
         inCodeBlock = false
         codeBlockLanguage = ''
         codeBlockContent = []
@@ -192,7 +193,7 @@ export const fetchLocalBlogPosts = async (): Promise<BlogPost[]> => {
     const posts: BlogPost[] = []
 
     // 导入所有markdown文件
-    const modules = import.meta.glob('../assets/blogs/*.md', { as: 'raw' })
+    const modules = (import.meta as any).glob('../assets/blogs/*.md', { as: 'raw' })
 
     for (const path in modules) {
       try {

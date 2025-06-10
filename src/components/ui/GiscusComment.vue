@@ -25,7 +25,9 @@
             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
           ></path>
         </svg>
-        <span class="text-gray-600 dark:text-gray-300">正在加载评论系统...</span>
+        <span class="text-gray-600 dark:text-gray-300"
+          >正在加载评论系统...</span
+        >
       </div>
     </div>
 
@@ -84,17 +86,22 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch, nextTick } from "vue";
-import { getGiscusConfig, validateGiscusConfig, getGiscusTheme, GISCUS_SCRIPT_URL } from "../../config/giscus";
+import {
+  getGiscusConfig,
+  validateGiscusConfig,
+  getGiscusTheme,
+  GISCUS_SCRIPT_URL,
+} from "../../config/giscus";
 
 // Props
 interface Props {
-  theme?: 'light' | 'dark' | 'auto';
+  theme?: "light" | "dark" | "auto";
   term?: string; // 用于特定映射的术语
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  theme: 'auto',
-  term: ''
+  theme: "auto",
+  term: "",
 });
 
 // 响应式状态
@@ -107,15 +114,16 @@ const giscusContainer = ref<HTMLElement | null>(null);
 const giscusConfig = getGiscusConfig();
 
 // 当前主题
-const currentTheme = ref<string>('preferred_color_scheme');
+const currentTheme = ref<string>("preferred_color_scheme");
 
 /**
  * 获取当前主题
  */
 const getCurrentTheme = (): string => {
-  if (props.theme === 'auto') {
-    const isDark = document.documentElement.classList.contains('dark') || 
-                   window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (props.theme === "auto") {
+    const isDark =
+      document.documentElement.classList.contains("dark") ||
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
     return getGiscusTheme(isDark);
   }
   return props.theme;
@@ -127,7 +135,9 @@ const getCurrentTheme = (): string => {
 const loadAndInitGiscus = (): Promise<void> => {
   return new Promise((resolve, reject) => {
     // 检查是否已经有脚本标签
-    const existingScript = document.querySelector(`script[src="${GISCUS_SCRIPT_URL}"]`);
+    const existingScript = document.querySelector(
+      `script[src="${GISCUS_SCRIPT_URL}"]`,
+    );
     if (existingScript) {
       // 如果脚本已存在，直接初始化
       initGiscusWidget();
@@ -142,22 +152,28 @@ const loadAndInitGiscus = (): Promise<void> => {
     script.crossOrigin = "anonymous";
 
     // 设置 Giscus 配置属性
-    script.setAttribute('data-repo', giscusConfig.repo);
-    script.setAttribute('data-repo-id', giscusConfig.repoId);
-    script.setAttribute('data-category', giscusConfig.category);
-    script.setAttribute('data-category-id', giscusConfig.categoryId);
-    script.setAttribute('data-mapping', giscusConfig.mapping);
-    script.setAttribute('data-strict', giscusConfig.strict || '0');
-    script.setAttribute('data-reactions-enabled', giscusConfig.reactionsEnabled || '1');
-    script.setAttribute('data-emit-metadata', giscusConfig.emitMetadata || '0');
-    script.setAttribute('data-input-position', giscusConfig.inputPosition || 'bottom');
-    script.setAttribute('data-theme', getCurrentTheme());
-    script.setAttribute('data-lang', giscusConfig.lang || 'zh-CN');
-    script.setAttribute('data-loading', giscusConfig.loading || 'lazy');
+    script.setAttribute("data-repo", giscusConfig.repo);
+    script.setAttribute("data-repo-id", giscusConfig.repoId);
+    script.setAttribute("data-category", giscusConfig.category);
+    script.setAttribute("data-category-id", giscusConfig.categoryId);
+    script.setAttribute("data-mapping", giscusConfig.mapping);
+    script.setAttribute("data-strict", giscusConfig.strict || "0");
+    script.setAttribute(
+      "data-reactions-enabled",
+      giscusConfig.reactionsEnabled || "1",
+    );
+    script.setAttribute("data-emit-metadata", giscusConfig.emitMetadata || "0");
+    script.setAttribute(
+      "data-input-position",
+      giscusConfig.inputPosition || "bottom",
+    );
+    script.setAttribute("data-theme", getCurrentTheme());
+    script.setAttribute("data-lang", giscusConfig.lang || "zh-CN");
+    script.setAttribute("data-loading", giscusConfig.loading || "lazy");
 
     // 如果有特定术语，设置 data-term
-    if (props.term && giscusConfig.mapping === 'specific') {
-      script.setAttribute('data-term', props.term);
+    if (props.term && giscusConfig.mapping === "specific") {
+      script.setAttribute("data-term", props.term);
     }
 
     script.onload = () => {
@@ -185,8 +201,8 @@ const loadAndInitGiscus = (): Promise<void> => {
 const initGiscusWidget = () => {
   if (!giscusContainer.value) return;
 
-  // 清空容器
-  giscusContainer.value.innerHTML = "";
+  // 清理容器和选中状态
+  cleanupContainer();
 
   // 创建 Giscus 脚本元素
   const script = document.createElement("script");
@@ -195,24 +211,62 @@ const initGiscusWidget = () => {
   script.crossOrigin = "anonymous";
 
   // 设置配置属性
-  script.setAttribute('data-repo', giscusConfig.repo);
-  script.setAttribute('data-repo-id', giscusConfig.repoId);
-  script.setAttribute('data-category', giscusConfig.category);
-  script.setAttribute('data-category-id', giscusConfig.categoryId);
-  script.setAttribute('data-mapping', giscusConfig.mapping);
-  script.setAttribute('data-strict', giscusConfig.strict || '0');
-  script.setAttribute('data-reactions-enabled', giscusConfig.reactionsEnabled || '1');
-  script.setAttribute('data-emit-metadata', giscusConfig.emitMetadata || '0');
-  script.setAttribute('data-input-position', giscusConfig.inputPosition || 'bottom');
-  script.setAttribute('data-theme', getCurrentTheme());
-  script.setAttribute('data-lang', giscusConfig.lang || 'zh-CN');
-  script.setAttribute('data-loading', giscusConfig.loading || 'lazy');
+  script.setAttribute("data-repo", giscusConfig.repo);
+  script.setAttribute("data-repo-id", giscusConfig.repoId);
+  script.setAttribute("data-category", giscusConfig.category);
+  script.setAttribute("data-category-id", giscusConfig.categoryId);
+  script.setAttribute("data-mapping", giscusConfig.mapping);
+  script.setAttribute("data-strict", giscusConfig.strict || "0");
+  script.setAttribute(
+    "data-reactions-enabled",
+    giscusConfig.reactionsEnabled || "1",
+  );
+  script.setAttribute("data-emit-metadata", giscusConfig.emitMetadata || "0");
+  script.setAttribute(
+    "data-input-position",
+    giscusConfig.inputPosition || "bottom",
+  );
+  script.setAttribute("data-theme", getCurrentTheme());
+  script.setAttribute("data-lang", giscusConfig.lang || "zh-CN");
+  script.setAttribute("data-loading", giscusConfig.loading || "lazy");
 
-  if (props.term && giscusConfig.mapping === 'specific') {
-    script.setAttribute('data-term', props.term);
+  if (props.term && giscusConfig.mapping === "specific") {
+    script.setAttribute("data-term", props.term);
   }
 
   giscusContainer.value.appendChild(script);
+};
+
+/**
+ * 清理容器和选中状态
+ */
+const cleanupContainer = () => {
+  if (!giscusContainer.value) return;
+
+  // 清除文本选择
+  try {
+    if (window.getSelection) {
+      const selection = window.getSelection();
+      if (selection) {
+        selection.removeAllRanges();
+      }
+    }
+  } catch (error) {
+    console.warn("清理文本选择时出错:", error);
+  }
+
+  // 移除所有事件监听器
+  const iframes = giscusContainer.value.querySelectorAll("iframe");
+  iframes.forEach((iframe) => {
+    try {
+      iframe.remove();
+    } catch (error) {
+      console.warn("移除 iframe 时出错:", error);
+    }
+  });
+
+  // 清空容器
+  giscusContainer.value.innerHTML = "";
 };
 
 /**
@@ -254,29 +308,35 @@ const initGiscus = async () => {
  * 更新主题
  */
 const updateTheme = (newTheme: string) => {
-  const iframe = giscusContainer.value?.querySelector('iframe');
+  const iframe = giscusContainer.value?.querySelector("iframe");
   if (iframe) {
     const message = {
-      type: 'set-theme',
-      theme: newTheme
+      type: "set-theme",
+      theme: newTheme,
     };
-    iframe.contentWindow?.postMessage({ giscus: message }, 'https://giscus.app');
+    iframe.contentWindow?.postMessage(
+      { giscus: message },
+      "https://giscus.app",
+    );
   }
 };
 
 // 监听主题变化
-watch(() => props.theme, () => {
-  const newTheme = getCurrentTheme();
-  if (newTheme !== currentTheme.value) {
-    currentTheme.value = newTheme;
-    updateTheme(newTheme);
-  }
-});
+watch(
+  () => props.theme,
+  () => {
+    const newTheme = getCurrentTheme();
+    if (newTheme !== currentTheme.value) {
+      currentTheme.value = newTheme;
+      updateTheme(newTheme);
+    }
+  },
+);
 
 // 监听系统主题变化
-const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 const handleThemeChange = () => {
-  if (props.theme === 'auto') {
+  if (props.theme === "auto") {
     const newTheme = getCurrentTheme();
     if (newTheme !== currentTheme.value) {
       currentTheme.value = newTheme;
@@ -289,20 +349,18 @@ const handleThemeChange = () => {
 onMounted(() => {
   currentTheme.value = getCurrentTheme();
   initGiscus();
-  
+
   // 监听系统主题变化
-  mediaQuery.addEventListener('change', handleThemeChange);
+  mediaQuery.addEventListener("change", handleThemeChange);
 });
 
 // 组件卸载时清理
 onUnmounted(() => {
   // 移除主题变化监听器
-  mediaQuery.removeEventListener('change', handleThemeChange);
-  
-  // 清理容器
-  if (giscusContainer.value) {
-    giscusContainer.value.innerHTML = "";
-  }
+  mediaQuery.removeEventListener("change", handleThemeChange);
+
+  // 完整清理容器
+  cleanupContainer();
 });
 </script>
 

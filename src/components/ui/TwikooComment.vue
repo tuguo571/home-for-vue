@@ -145,6 +145,29 @@ const loadTwikooScript = (): Promise<void> => {
 };
 
 /**
+ * 清理容器和选中状态
+ */
+const cleanupTwikooContainer = () => {
+  const container = document.getElementById("twikoo-container");
+  if (!container) return;
+
+  // 清除文本选择
+  try {
+    if (window.getSelection) {
+      const selection = window.getSelection();
+      if (selection) {
+        selection.removeAllRanges();
+      }
+    }
+  } catch (error) {
+    console.warn("清理文本选择时出错:", error);
+  }
+
+  // 清空容器
+  container.innerHTML = "";
+};
+
+/**
  * 初始化 Twikoo
  */
 const initTwikoo = async () => {
@@ -170,8 +193,8 @@ const initTwikoo = async () => {
       throw new Error("找不到 Twikoo 容器");
     }
 
-    // 清空容器
-    container.innerHTML = "";
+    // 清理容器和选中状态
+    cleanupTwikooContainer();
 
     // 初始化 Twikoo
     await window.twikoo.init({
@@ -199,11 +222,8 @@ onMounted(() => {
 
 // 组件卸载时清理
 onUnmounted(() => {
-  // 清理可能的定时器或事件监听器
-  const container = document.getElementById("twikoo-container");
-  if (container) {
-    container.innerHTML = "";
-  }
+  // 完整清理容器
+  cleanupTwikooContainer();
 });
 </script>
 

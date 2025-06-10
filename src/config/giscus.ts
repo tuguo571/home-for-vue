@@ -2,7 +2,7 @@
  * Giscus 评论系统配置
  */
 
-import { getEnv } from '../utils/env';
+import { getEnvSafe } from '../utils/env';
 
 export interface GiscusConfig {
   repo: string;
@@ -40,18 +40,18 @@ export const defaultGiscusConfig: GiscusConfig = {
  */
 export const getGiscusConfig = (): GiscusConfig => {
   return {
-    repo: getEnv('VITE_GISCUS_REPO') || defaultGiscusConfig.repo,
-    repoId: getEnv('VITE_GISCUS_REPO_ID') || defaultGiscusConfig.repoId,
-    category: getEnv('VITE_GISCUS_CATEGORY') || defaultGiscusConfig.category,
-    categoryId: getEnv('VITE_GISCUS_CATEGORY_ID') || defaultGiscusConfig.categoryId,
-    mapping: (getEnv('VITE_GISCUS_MAPPING') as GiscusConfig['mapping']) || defaultGiscusConfig.mapping,
-    strict: (getEnv('VITE_GISCUS_STRICT') as GiscusConfig['strict']) || defaultGiscusConfig.strict,
-    reactionsEnabled: (getEnv('VITE_GISCUS_REACTIONS_ENABLED') as GiscusConfig['reactionsEnabled']) || defaultGiscusConfig.reactionsEnabled,
-    emitMetadata: (getEnv('VITE_GISCUS_EMIT_METADATA') as GiscusConfig['emitMetadata']) || defaultGiscusConfig.emitMetadata,
-    inputPosition: (getEnv('VITE_GISCUS_INPUT_POSITION') as GiscusConfig['inputPosition']) || defaultGiscusConfig.inputPosition,
-    theme: getEnv('VITE_GISCUS_THEME') || defaultGiscusConfig.theme,
-    lang: getEnv('VITE_GISCUS_LANG') || defaultGiscusConfig.lang,
-    loading: (getEnv('VITE_GISCUS_LOADING') as GiscusConfig['loading']) || defaultGiscusConfig.loading,
+    repo: getEnvSafe('VITE_GISCUS_REPO') || defaultGiscusConfig.repo,
+    repoId: getEnvSafe('VITE_GISCUS_REPO_ID') || defaultGiscusConfig.repoId,
+    category: getEnvSafe('VITE_GISCUS_CATEGORY') || defaultGiscusConfig.category,
+    categoryId: getEnvSafe('VITE_GISCUS_CATEGORY_ID') || defaultGiscusConfig.categoryId,
+    mapping: (getEnvSafe('VITE_GISCUS_MAPPING') as GiscusConfig['mapping']) || defaultGiscusConfig.mapping,
+    strict: (getEnvSafe('VITE_GISCUS_STRICT') as GiscusConfig['strict']) || defaultGiscusConfig.strict,
+    reactionsEnabled: (getEnvSafe('VITE_GISCUS_REACTIONS_ENABLED') as GiscusConfig['reactionsEnabled']) || defaultGiscusConfig.reactionsEnabled,
+    emitMetadata: (getEnvSafe('VITE_GISCUS_EMIT_METADATA') as GiscusConfig['emitMetadata']) || defaultGiscusConfig.emitMetadata,
+    inputPosition: (getEnvSafe('VITE_GISCUS_INPUT_POSITION') as GiscusConfig['inputPosition']) || defaultGiscusConfig.inputPosition,
+    theme: getEnvSafe('VITE_GISCUS_THEME') || defaultGiscusConfig.theme,
+    lang: getEnvSafe('VITE_GISCUS_LANG') || defaultGiscusConfig.lang,
+    loading: (getEnvSafe('VITE_GISCUS_LOADING') as GiscusConfig['loading']) || defaultGiscusConfig.loading,
   };
 };
 

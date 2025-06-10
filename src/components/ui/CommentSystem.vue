@@ -106,9 +106,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import TwikooComment from "./TwikooComment.vue";
 import GiscusComment from "./GiscusComment.vue";
+import {
+  clearTextSelection,
+  createSelectionChangeListener,
+} from "../../utils/selection";
 
 // Props
 interface Props {
@@ -152,11 +156,17 @@ const setCommentSystem = (system: "twikoo" | "giscus" | "disabled") => {
   if (system === "twikoo" && !props.enableTwikoo) return;
   if (system === "giscus" && !props.enableGiscus) return;
 
-  currentSystem.value = system;
-  emit("systemChange", system);
+  // 清理当前系统的选中状态
+  clearTextSelection();
 
-  // 保存用户偏好到 localStorage
-  localStorage.setItem("preferred-comment-system", system);
+  // 延迟切换以确保清理完成
+  setTimeout(() => {
+    currentSystem.value = system;
+    emit("systemChange", system);
+
+    // 保存用户偏好到 localStorage
+    localStorage.setItem("preferred-comment-system", system);
+  }, 100);
 };
 
 // 从 localStorage 恢复用户偏好
@@ -177,9 +187,51 @@ const restoreUserPreference = () => {
   }
 };
 
+// 选择变化监听器清理函数
+let cleanupSelectionListener: (() => void) | null = null;
+
 // 组件挂载时恢复用户偏好
 onMounted(() => {
   restoreUserPreference();
+
+  // 创建选择变化监听器，防止选择跨越评论系统边界
+  cleanupSelectionListener = createSelectionChangeListener(
+    (selection) => {
+      if (selection && selection.rangeCount > 0) {
+        // 检查选择是否跨越了评论系统边界
+        const range = selection.getRangeAt(0);
+        const commentContainer = document.querySelector(".comment-system");
+
+        if (commentContainer) {
+          const commentRect = commentContainer.getBoundingClientRect();
+          const rangeRect = range.getBoundingClientRect();
+
+          // 如果选择跨越了评论系统边界，清理选择
+          if (
+            rangeRect.top < commentRect.top ||
+            rangeRect.bottom > commentRect.bottom ||
+            rangeRect.left < commentRect.left ||
+            rangeRect.right > commentRect.right
+          ) {
+            clearTextSelection();
+          }
+        }
+      }
+    },
+    { debounce: 100 },
+  );
+});
+
+// 组件卸载时清理
+onUnmounted(() => {
+  // 清理选择变化监听器
+  if (cleanupSelectionListener) {
+    cleanupSelectionListener();
+    cleanupSelectionListener = null;
+  }
+
+  // 清理文本选择
+  clearTextSelection();
 });
 </script>
 

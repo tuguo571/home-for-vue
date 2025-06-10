@@ -16,13 +16,35 @@ interface ImportMetaEnv {
   readonly VITE_TWIKOO_ENV_ID: string;
   readonly VITE_TWIKOO_CDN_URL: string;
   readonly VITE_GUESTBOOK_URL: string;
+  // Giscus 评论系统环境变量
+  readonly VITE_GISCUS_REPO?: string;
+  readonly VITE_GISCUS_REPO_ID?: string;
+  readonly VITE_GISCUS_CATEGORY?: string;
+  readonly VITE_GISCUS_CATEGORY_ID?: string;
+  readonly VITE_GISCUS_MAPPING?: string;
+  readonly VITE_GISCUS_STRICT?: string;
+  readonly VITE_GISCUS_REACTIONS_ENABLED?: string;
+  readonly VITE_GISCUS_EMIT_METADATA?: string;
+  readonly VITE_GISCUS_INPUT_POSITION?: string;
+  readonly VITE_GISCUS_THEME?: string;
+  readonly VITE_GISCUS_LANG?: string;
+  readonly VITE_GISCUS_LOADING?: string;
   readonly DEV: boolean;
   readonly PROD: boolean;
   readonly MODE: string;
 }
 
+// 扩展 ImportMeta 接口以包含 Vite 的 glob 方法
 interface ImportMeta {
   readonly env: ImportMetaEnv;
+  readonly glob: (
+    pattern: string,
+    options?: {
+      as?: 'raw' | 'url' | 'worker' | 'worker-inline';
+      eager?: boolean;
+      import?: string;
+    }
+  ) => Record<string, () => Promise<any>>;
 }
 
 // Vue 组件类型声明
