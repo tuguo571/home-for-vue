@@ -4,6 +4,7 @@ import type { Ref } from "vue";
 import { fetchLocalBlogPosts } from "../utils/markdown";
 import type { BlogPost } from "../types/blog";
 import PageTransition from "../components/PageTransition.vue";
+import CommentSystem from "../components/ui/CommentSystem.vue";
 
 // 目录项接口
 interface TocItem {
@@ -776,6 +777,43 @@ function formatDate(date: Date): string {
                   class="prose prose-lg max-w-none dark:prose-invert markdown-content"
                   v-html="selectedPost.content"
                 ></div>
+              </div>
+
+              <!-- 评论系统 -->
+              <div
+                class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-8 mt-8"
+              >
+                <div class="mb-6">
+                  <h3
+                    class="text-xl font-semibold text-gray-900 dark:text-white mb-2 flex items-center"
+                  >
+                    <svg
+                      class="w-5 h-5 mr-2 text-blue-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                      />
+                    </svg>
+                    文章评论
+                  </h3>
+                  <p class="text-gray-600 dark:text-gray-400 text-sm">
+                    欢迎在这里分享您的想法和见解
+                  </p>
+                </div>
+                <CommentSystem
+                  :default-system="'twikoo'"
+                  :show-selector="true"
+                  :theme="'auto'"
+                  :term="selectedPost.title"
+                  :enable-twikoo="true"
+                  :enable-giscus="true"
+                />
               </div>
             </div>
           </div>
