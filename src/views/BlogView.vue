@@ -601,20 +601,20 @@ function formatDate(date: Date): string {
 
                 <!-- 目录导航 -->
                 <div class="max-h-[60vh] overflow-y-auto scrollbar-hide">
-                  <nav class="space-y-2">
+                  <nav class="space-y-1">
                     <button
                       v-for="item in tocItems"
                       :key="item.id"
                       @click="scrollToHeading(item.id)"
                       :class="[
-                        'block w-full text-left px-3 py-2.5 rounded-lg text-sm transition-all duration-200 toc-item relative group',
+                        'block w-full text-left px-3 py-1.5 rounded-lg text-sm transition-all duration-200 toc-item relative group',
                         `toc-level-${item.level}`,
                         activeHeadingId === item.id
                           ? 'bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 font-semibold'
                           : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100/80 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-gray-100 font-medium',
                       ]"
                     >
-                      <span class="block truncate leading-relaxed">{{
+                      <span class="block truncate leading-snug">{{
                         item.text
                       }}</span>
                       <!-- 当前阅读位置指示器 -->
@@ -790,124 +790,128 @@ function formatDate(date: Date): string {
 
               <!-- 90%文章内容区域 -->
               <div class="w-[90%] px-4 md:px-8 py-8 md:py-12">
-              <!-- 文章头部信息 -->
-              <header
-                class="mb-12 pb-8 text-center border-b border-gray-200/60 dark:border-gray-700/60"
-              >
-                <!-- 分类标签 -->
-                <div class="mb-6">
-                  <span
-                    class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 border border-blue-200/50 dark:border-blue-700/50"
-                  >
-                    {{ selectedPost.category }}
-                  </span>
-                </div>
-
-                <!-- 标题区域 -->
-                <div class="mb-8">
-                  <h1
-                    class="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight text-gray-900 dark:text-white tracking-tight"
-                  >
-                    {{ selectedPost.title }}
-                  </h1>
-
-                  <!-- 文章描述 -->
-                  <p
-                    class="text-lg md:text-xl text-gray-600 dark:text-gray-400 leading-relaxed max-w-3xl mx-auto font-light"
-                  >
-                    {{ selectedPost.description }}
-                  </p>
-                </div>
-
-                <!-- 元信息 -->
-                <div
-                  class="flex items-center justify-center flex-wrap gap-6 text-sm text-gray-500 dark:text-gray-400"
+                <!-- 文章头部信息 -->
+                <header
+                  class="mb-12 pb-8 text-center border-b border-gray-200/60 dark:border-gray-700/60"
                 >
-                  <div class="flex items-center gap-2">
-                    <svg
-                      class="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                      ></path>
-                    </svg>
-                    <span>{{ formatDate(selectedPost.date) }}</span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <svg
-                      class="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                      ></path>
-                    </svg>
+                  <!-- 分类标签 -->
+                  <div class="mb-6">
                     <span
-                      >{{
-                        calculateReadingTime(selectedPost.content || "")
-                      }}
-                      分钟阅读</span
+                      class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 border border-blue-200/50 dark:border-blue-700/50"
                     >
+                      {{ selectedPost.category }}
+                    </span>
                   </div>
-                  <div class="flex items-center gap-2">
-                    <svg
-                      class="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+
+                  <!-- 标题区域 -->
+                  <div class="mb-8">
+                    <h1
+                      class="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight text-gray-900 dark:text-white tracking-tight"
                     >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                      ></path>
-                    </svg>
-                    <span>{{ Math.round(readingProgress) }}% 已读</span>
+                      {{ selectedPost.title }}
+                    </h1>
+
+                    <!-- 文章描述 -->
+                    <p
+                      class="text-lg md:text-xl text-gray-600 dark:text-gray-400 leading-relaxed max-w-3xl mx-auto font-light"
+                    >
+                      {{ selectedPost.description }}
+                    </p>
                   </div>
-                </div>
-              </header>
 
-              <!-- 文章内容 -->
-              <main
-                class="article-content"
-                :class="{ 'full-width': isFullWidth }"
-              >
-                <div
-                  class="prose prose-lg max-w-none dark:prose-invert markdown-content enhanced-content reading-content"
-                  v-html="selectedPost.content"
-                ></div>
-              </main>
+                  <!-- 元信息 -->
+                  <div
+                    class="flex items-center justify-center flex-wrap gap-6 text-sm text-gray-500 dark:text-gray-400"
+                  >
+                    <div class="flex items-center gap-2">
+                      <svg
+                        class="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        ></path>
+                      </svg>
+                      <span>{{ formatDate(selectedPost.date) }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <svg
+                        class="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path>
+                      </svg>
+                      <span
+                        >{{
+                          calculateReadingTime(selectedPost.content || "")
+                        }}
+                        分钟阅读</span
+                      >
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <svg
+                        class="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                        ></path>
+                      </svg>
+                      <span>{{ Math.round(readingProgress) }}% 已读</span>
+                    </div>
+                  </div>
+                </header>
 
-              <!-- 评论系统 -->
-              <div
-                class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700"
-              >
-                <h3
-                  class="text-lg font-semibold text-gray-900 dark:text-white mb-4"
+                <!-- 文章内容 -->
+                <main
+                  class="article-content"
+                  :class="{ 'full-width': isFullWidth }"
                 >
-                  评论
-                </h3>
-                <CommentSystem
-                  :default-system="'twikoo'"
-                  :show-selector="true"
-                  :theme="'auto'"
-                  :term="selectedPost.title"
-                  :enable-twikoo="true"
-                  :enable-giscus="true"
-                />
+                  <div
+                    class="prose prose-lg max-w-none dark:prose-invert markdown-content enhanced-content reading-content"
+                    v-html="selectedPost.content"
+                  ></div>
+                </main>
+
+                <!-- 评论系统 -->
+                <div
+                  class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700"
+                >
+                  <h3
+                    class="text-lg font-semibold text-gray-900 dark:text-white mb-4"
+                  >
+                    评论
+                  </h3>
+                  <CommentSystem
+                    :default-system="'twikoo'"
+                    :show-selector="true"
+                    :theme="'auto'"
+                    :term="selectedPost.title"
+                    :enable-twikoo="true"
+                    :enable-giscus="true"
+                  />
+                </div>
               </div>
+
+              <!-- 右侧5%空白 -->
+              <div class="w-[5%] flex-shrink-0"></div>
             </div>
           </div>
 
@@ -946,12 +950,19 @@ function formatDate(date: Date): string {
 
 /* 移除花哨动画 */
 
-/* 文章内容容器 - 优化阅读体验 */
+/* 文章内容容器 - 5%-90%-5%对称布局 */
 .article-content {
-  max-width: 72ch; /* 最佳阅读行长度 */
+  max-width: none; /* 移除最大宽度限制，使用父容器的90%宽度 */
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0;
   position: relative;
+  width: 100%;
+}
+
+/* 在90%容器内保持最佳阅读行长度 */
+.article-content .prose {
+  max-width: 75ch; /* 在90%容器内的最佳阅读宽度 */
+  margin: 0 auto;
 }
 
 /* 文章内容区域渐入动画 */
@@ -963,7 +974,6 @@ function formatDate(date: Date): string {
   transform: translateX(-50%);
   width: 60px;
   height: 4px;
-  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
   border-radius: 2px;
   margin-bottom: 2rem;
 }
@@ -1016,7 +1026,7 @@ function formatDate(date: Date): string {
 
 /* 段落样式优化 - 提升阅读体验 */
 .markdown-content p {
-  margin-bottom: 1.75rem !important; /* 增加段落间距 */
+  margin-bottom: 1.25rem !important; /* 减小段落间距，让内容更紧凑 */
   line-height: 1.8 !important;
   color: #374151 !important;
   text-align: justify !important; /* 两端对齐 */
@@ -1047,13 +1057,15 @@ function formatDate(date: Date): string {
 
 /* 移除首字母装饰 */
 
-/* 标题样式优化 - 改进视觉层次 */
-.markdown-content h1 {
+/* 标题样式优化 - 改进视觉层次和间距 */
+.markdown-content h1,
+.enhanced-content h1,
+.reading-content h1 {
   font-size: 2.25rem !important;
   font-weight: 800 !important;
   line-height: 1.2 !important;
   margin-top: 4rem !important;
-  margin-bottom: 2rem !important;
+  margin-bottom: 0.75rem !important; /* 进一步减小下方间距 */
   color: #111827 !important;
   border-bottom: 2px solid #e5e7eb !important;
   padding-bottom: 1rem !important;
@@ -1061,11 +1073,15 @@ function formatDate(date: Date): string {
   letter-spacing: -0.025em !important;
 }
 
-.markdown-content h1:first-child {
+.markdown-content h1:first-child,
+.enhanced-content h1:first-child,
+.reading-content h1:first-child {
   margin-top: 2rem !important;
 }
 
-.dark .markdown-content h1 {
+.dark .markdown-content h1,
+.dark .enhanced-content h1,
+.dark .reading-content h1 {
   color: #f9fafb !important;
   border-bottom-color: #374151 !important;
 }
@@ -1082,12 +1098,14 @@ function formatDate(date: Date): string {
   border-radius: 1px;
 }
 
-.markdown-content h2 {
+.markdown-content h2,
+.enhanced-content h2,
+.reading-content h2 {
   font-size: 1.75rem !important;
   font-weight: 700 !important;
   line-height: 1.3 !important;
   margin-top: 3rem !important;
-  margin-bottom: 1.5rem !important;
+  margin-bottom: 0.5rem !important; /* 进一步减小下方间距 */
   color: #1f2937 !important;
   border-left: 4px solid #3b82f6 !important;
   padding-left: 1rem !important;
@@ -1095,7 +1113,9 @@ function formatDate(date: Date): string {
   letter-spacing: -0.015em !important;
 }
 
-.dark .markdown-content h2 {
+.dark .markdown-content h2,
+.dark .enhanced-content h2,
+.dark .reading-content h2 {
   color: #f9fafb !important;
 }
 
@@ -1111,18 +1131,22 @@ function formatDate(date: Date): string {
   border-radius: 2px;
 }
 
-.markdown-content h3 {
+.markdown-content h3,
+.enhanced-content h3,
+.reading-content h3 {
   font-size: 1.375rem !important;
   font-weight: 650 !important;
   line-height: 1.4 !important;
   margin-top: 2.5rem !important;
-  margin-bottom: 1rem !important;
+  margin-bottom: 0.375rem !important; /* 进一步减小下方间距 */
   color: #374151 !important;
   position: relative !important;
   padding-left: 0.5rem !important;
 }
 
-.dark .markdown-content h3 {
+.dark .markdown-content h3,
+.dark .enhanced-content h3,
+.dark .reading-content h3 {
   color: #e5e7eb !important;
 }
 
@@ -1139,46 +1163,56 @@ function formatDate(date: Date): string {
   border-radius: 50%;
 }
 
-.markdown-content h4 {
+.markdown-content h4,
+.enhanced-content h4,
+.reading-content h4 {
   font-size: 1.25rem !important;
   font-weight: 600 !important;
   line-height: 1.4 !important;
   margin-top: 2rem !important;
-  margin-bottom: 0.75rem !important;
+  margin-bottom: 0.25rem !important; /* 进一步减小下方间距 */
   color: #374151 !important;
-  font-weight: 600 !important;
 }
 
-.dark .markdown-content h4 {
+.dark .markdown-content h4,
+.dark .enhanced-content h4,
+.dark .reading-content h4 {
   color: #e5e7eb !important;
 }
 
-.markdown-content h5 {
+.markdown-content h5,
+.enhanced-content h5,
+.reading-content h5 {
   font-size: 1.125rem !important;
   font-weight: 600 !important;
   line-height: 1.4 !important;
   margin-top: 1.75rem !important;
-  margin-bottom: 0.75rem !important;
+  margin-bottom: 0.25rem !important; /* 进一步减小下方间距 */
   color: #374151 !important;
 }
 
-.dark .markdown-content h5 {
+.dark .markdown-content h5,
+.dark .enhanced-content h5,
+.dark .reading-content h5 {
   color: #e5e7eb !important;
 }
 
-.markdown-content h6 {
-  font-size: 1rem !important;
+.markdown-content h6,
+.enhanced-content h6,
+.reading-content h6 {
+  font-size: 0.875rem !important;
   font-weight: 600 !important;
   line-height: 1.4 !important;
   margin-top: 1.5rem !important;
-  margin-bottom: 0.5rem !important;
+  margin-bottom: 0.125rem !important; /* 进一步减小下方间距 */
   color: #374151 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.05em !important;
-  font-size: 0.875rem !important;
 }
 
-.dark .markdown-content h6 {
+.dark .markdown-content h6,
+.dark .enhanced-content h6,
+.dark .reading-content h6 {
   color: #e5e7eb !important;
 }
 
@@ -1228,8 +1262,12 @@ function formatDate(date: Date): string {
   color: #f9fafb !important;
 }
 
-/* 内联代码样式 */
-.markdown-content code {
+/* 内联代码样式 - 确保正确显示，覆盖Tailwind Typography插件的默认样式 */
+.prose code:not(pre code),
+.prose-lg code:not(pre code),
+.markdown-content code:not(pre code),
+.enhanced-content code:not(pre code),
+.reading-content code:not(pre code) {
   background-color: #f3f4f6 !important;
   color: #dc2626 !important;
   padding: 0.125rem 0.375rem !important;
@@ -1238,11 +1276,34 @@ function formatDate(date: Date): string {
   font-family: "SF Mono", "Monaco", "Inconsolata", "Roboto Mono", "Courier New",
     monospace !important;
   font-weight: 500 !important;
+  border: 1px solid #e5e7eb !important;
+  vertical-align: baseline !important;
+  line-height: 1.4 !important;
 }
 
-.dark .markdown-content code {
+/* 确保行内代码不显示反引号 - 覆盖任何可能添加反引号的样式 */
+.prose code:not(pre code)::before,
+.prose code:not(pre code)::after,
+.prose-lg code:not(pre code)::before,
+.prose-lg code:not(pre code)::after,
+.markdown-content code:not(pre code)::before,
+.markdown-content code:not(pre code)::after,
+.enhanced-content code:not(pre code)::before,
+.enhanced-content code:not(pre code)::after,
+.reading-content code:not(pre code)::before,
+.reading-content code:not(pre code)::after {
+  content: "" !important;
+  display: none !important;
+}
+
+.dark .prose code:not(pre code),
+.dark .prose-lg code:not(pre code),
+.dark .markdown-content code:not(pre code),
+.dark .enhanced-content code:not(pre code),
+.dark .reading-content code:not(pre code) {
   background-color: #374151 !important;
   color: #fca5a5 !important;
+  border-color: #4b5563 !important;
 }
 
 /* 代码块样式 */
@@ -1261,12 +1322,16 @@ function formatDate(date: Date): string {
   border-color: #475569 !important;
 }
 
+/* 代码块内的代码样式 - 覆盖行内代码样式 */
 .markdown-content pre code {
   background-color: transparent !important;
   color: #334155 !important;
   padding: 0 !important;
   border-radius: 0 !important;
   font-size: 0.875rem !important;
+  border: none !important;
+  vertical-align: baseline !important;
+  line-height: inherit !important;
 }
 
 .dark .markdown-content pre code {
@@ -1282,7 +1347,7 @@ function formatDate(date: Date): string {
     rgba(139, 92, 246, 0.08) 100%
   ) !important;
   padding: 1.75rem !important;
-  margin: 2.5rem 0 !important;
+  margin: 1rem 0 !important; /* 进一步减小引用块间距，与代码块保持一致 */
   border-radius: 0 1rem 1rem 0 !important;
   font-style: italic !important;
   color: #374151 !important;
@@ -1344,7 +1409,7 @@ function formatDate(date: Date): string {
 .markdown-content hr {
   border: none !important;
   border-top: 1px solid #e5e7eb !important;
-  margin: 2.5rem 0 !important;
+  margin: 1rem 0 !important; /* 进一步减小表格间距，与代码块保持一致 */
 }
 
 .dark .markdown-content hr {
@@ -1485,9 +1550,8 @@ function formatDate(date: Date): string {
 }
 
 /* 全屏模式下的文章容器 */
-.article-content.full-width {
-  max-width: 90ch !important;
-  padding: 0 2rem !important;
+.article-content.full-width .prose {
+  max-width: 85ch !important; /* 全屏模式下更宽的阅读区域 */
 }
 
 /* 全屏模式下的段落优化 */
@@ -1501,19 +1565,19 @@ function formatDate(date: Date): string {
 .full-width .markdown-content h1 {
   font-size: 2.5rem !important;
   margin-top: 4.5rem !important;
-  margin-bottom: 2.25rem !important;
+  margin-bottom: 1.5rem !important; /* 减小下方间距 */
 }
 
 .full-width .markdown-content h2 {
   font-size: 2rem !important;
   margin-top: 3.5rem !important;
-  margin-bottom: 1.75rem !important;
+  margin-bottom: 1.25rem !important; /* 减小下方间距 */
 }
 
 .full-width .markdown-content h3 {
   font-size: 1.5rem !important;
   margin-top: 3rem !important;
-  margin-bottom: 1.25rem !important;
+  margin-bottom: 1rem !important; /* 减小下方间距 */
 }
 
 /* 全屏模态框背景模糊效果 */
@@ -1521,46 +1585,53 @@ function formatDate(date: Date): string {
   backdrop-filter: blur(4px);
 }
 
-/* 目录样式优化 */
+/* 目录样式优化 - 紧凑间距设计 */
 .toc-item {
   position: relative;
-  border-radius: 8px !important;
+  border-radius: 6px !important;
+  line-height: 1.4 !important; /* 减小行高使目录更紧凑 */
 }
 
 .toc-level-1 {
   margin-left: 0;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.95rem; /* 稍微减小字体 */
+  margin-bottom: 0.125rem; /* 添加小间距区分层级 */
 }
 
 .toc-level-2 {
   margin-left: 0.75rem;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
+  margin-bottom: 0.0625rem; /* 更小的间距 */
 }
 
 .toc-level-3 {
   margin-left: 1.5rem;
   font-weight: 500;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  margin-bottom: 0.0625rem;
 }
 
 .toc-level-4 {
   margin-left: 2.25rem;
   font-weight: 500;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  margin-bottom: 0.0625rem;
 }
 
 .toc-level-5 {
   margin-left: 3rem;
   font-weight: 400;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
+  margin-bottom: 0.0625rem;
 }
 
 .toc-level-6 {
   margin-left: 3.75rem;
   font-weight: 400;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
+  margin-bottom: 0.0625rem;
 }
 
 /* 布局动画 */
@@ -1623,10 +1694,29 @@ function formatDate(date: Date): string {
 
 /* 响应式优化 - 移动端阅读体验 */
 @media (max-width: 768px) {
+  /* 移动端调整为传统布局 */
+  .w-full.flex {
+    display: block !important;
+  }
+
+  .w-\[5\%\] {
+    display: none !important;
+  }
+
+  .w-\[90\%\] {
+    width: 100% !important;
+    padding: 0 1rem !important;
+  }
+
   /* 移动端文章容器 */
   .article-content {
-    max-width: 100%;
-    padding: 0 1rem;
+    width: 100%;
+    padding: 0;
+  }
+
+  .article-content .prose {
+    max-width: 100% !important;
+    margin: 0;
   }
 
   /* 移动端字体调整 */
@@ -1637,7 +1727,7 @@ function formatDate(date: Date): string {
   }
 
   .markdown-content p {
-    margin-bottom: 1.5rem !important;
+    margin-bottom: 1rem !important; /* 移动端进一步减小段落间距 */
     line-height: 1.75 !important;
     text-align: left !important; /* 移动端左对齐更好 */
   }
@@ -1645,14 +1735,14 @@ function formatDate(date: Date): string {
   /* 移动端首段样式 */
   .markdown-content > p:first-of-type {
     font-size: 1.125rem !important;
-    margin-bottom: 1.75rem !important;
+    margin-bottom: 1.25rem !important; /* 减小首段下方间距 */
   }
 
   /* 移动端标题调整 - 优化层级和间距 */
   .markdown-content h1 {
     font-size: 1.875rem !important;
     margin-top: 2.5rem !important;
-    margin-bottom: 1.25rem !important;
+    margin-bottom: 1rem !important; /* 减小下方间距 */
     padding-bottom: 0.75rem !important;
   }
 
@@ -1663,29 +1753,32 @@ function formatDate(date: Date): string {
   .markdown-content h2 {
     font-size: 1.5rem !important;
     margin-top: 2.25rem !important;
-    margin-bottom: 1rem !important;
+    margin-bottom: 0.75rem !important; /* 减小下方间距 */
     padding-left: 0.75rem !important;
   }
 
   .markdown-content h3 {
     font-size: 1.25rem !important;
     margin-top: 2rem !important;
-    margin-bottom: 0.75rem !important;
+    margin-bottom: 0.5rem !important; /* 减小下方间距 */
   }
 
   .markdown-content h4 {
     font-size: 1.125rem !important;
     margin-top: 1.75rem !important;
+    margin-bottom: 0.375rem !important; /* 减小下方间距 */
   }
 
   .markdown-content h5 {
     font-size: 1.0625rem !important;
     margin-top: 1.5rem !important;
+    margin-bottom: 0.375rem !important; /* 减小下方间距 */
   }
 
   .markdown-content h6 {
     font-size: 0.9375rem !important;
     margin-top: 1.25rem !important;
+    margin-bottom: 0.25rem !important; /* 减小下方间距 */
   }
 
   /* 移动端代码块优化 */
