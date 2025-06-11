@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick } from "vue";
 import type { Ref } from "vue";
-import { fetchLocalBlogPosts } from "../utils/markdown";
+import {
+  fetchLocalBlogPosts,
+  addCopyButtonsToCodeBlocks,
+} from "../utils/enhanced-markdown";
 import type { BlogPost } from "../types/blog";
 import PageTransition from "../components/PageTransition.vue";
 import CommentSystem from "../components/ui/CommentSystem.vue";
@@ -278,78 +281,7 @@ function calculateReadingTime(content: string): number {
   return Math.ceil(wordCount / 200);
 }
 
-// 复制代码到剪贴板
-async function copyCodeToClipboard(code: string) {
-  try {
-    await navigator.clipboard.writeText(code);
-    // 可以添加一个简单的提示
-    const toast = document.createElement("div");
-    toast.textContent = "代码已复制到剪贴板";
-    toast.className =
-      "fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300";
-    document.body.appendChild(toast);
-    setTimeout(() => {
-      toast.style.opacity = "0";
-      setTimeout(() => document.body.removeChild(toast), 300);
-    }, 2000);
-  } catch (err) {
-    console.error("复制失败:", err);
-    // 降级方案：选择文本
-    const textArea = document.createElement("textarea");
-    textArea.value = code;
-    document.body.appendChild(textArea);
-    textArea.select();
-    document.execCommand("copy");
-    document.body.removeChild(textArea);
-  }
-}
-
-// 为代码块添加复制按钮
-function addCopyButtonsToCodeBlocks() {
-  nextTick(() => {
-    const codeBlocks = document.querySelectorAll(".markdown-content pre");
-    codeBlocks.forEach((block) => {
-      // 检查是否已经添加了复制按钮
-      if (block.querySelector(".copy-button")) return;
-
-      const codeElement = block.querySelector("code");
-      if (!codeElement) return;
-
-      const copyButton = document.createElement("button");
-      copyButton.className =
-        "copy-button absolute top-3 right-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 p-2 rounded-lg transition-all duration-200 opacity-0 group-hover:opacity-100 z-10";
-      copyButton.innerHTML = `
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-        </svg>
-      `;
-      copyButton.title = "复制代码";
-
-      copyButton.addEventListener("click", () => {
-        const code = codeElement.textContent || "";
-        copyCodeToClipboard(code);
-
-        // 临时改变按钮图标表示复制成功
-        copyButton.innerHTML = `
-          <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-        `;
-        setTimeout(() => {
-          copyButton.innerHTML = `
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-            </svg>
-          `;
-        }, 1500);
-      });
-
-      // 为代码块添加group类以支持hover效果
-      (block as HTMLElement).classList.add("group");
-      block.appendChild(copyButton);
-    });
-  });
-}
+// 代码块复制功能现在由 enhanced-markdown.ts 处理
 
 onMounted(() => {
   loadBlogPosts();
@@ -623,103 +555,173 @@ function formatDate(date: Date): string {
         </button>
 
         <!-- 全屏模态框内容 -->
-        <div class="flex-1 flex overflow-hidden">
-          <!-- 目录侧边栏 -->
+        <div class="w-full h-full flex">
+          <!-- 左侧空白区域 10% -->
+          <div class="w-[10%] bg-transparent"></div>
+
+          <!-- 目录区域 20% -->
           <div
             v-if="showToc && tocItems.length > 0"
-            class="w-80 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto h-full"
+            :class="[
+              'w-[20%] h-full flex flex-col justify-center p-4',
+              showToc ? 'show' : '',
+            ]"
           >
-            <div class="p-6">
-              <div class="flex items-center justify-between mb-6">
-                <h3
-                  class="text-lg font-semibold text-gray-900 dark:text-white flex items-center"
-                >
-                  <svg
-                    class="w-5 h-5 mr-2 text-purple-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+            <!-- 目录框框 -->
+            <div
+              class="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg overflow-hidden"
+            >
+              <!-- 目录内容容器 - 垂直居中 -->
+              <div class="flex flex-col justify-center px-6 py-8">
+                <!-- 目录标题 -->
+                <div class="text-center mb-6">
+                  <h3
+                    class="text-base font-bold text-gray-900 dark:text-white flex items-center justify-center"
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    />
-                  </svg>
-                  文章目录
-                </h3>
-                <button
-                  @click="toggleToc"
-                  class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-md transition-colors"
-                >
-                  <svg
-                    class="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </div>
+                    <div
+                      class="w-5 h-5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mr-2"
+                    >
+                      <svg
+                        class="w-3 h-3 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M4 6h16M4 10h16M4 14h16M4 18h16"
+                        />
+                      </svg>
+                    </div>
+                    目录
+                  </h3>
+                </div>
 
-              <nav class="space-y-1">
-                <button
-                  v-for="item in tocItems"
-                  :key="item.id"
-                  @click="scrollToHeading(item.id)"
-                  :class="[
-                    'block w-full text-left px-3 py-2 rounded-lg text-sm transition-all duration-200 toc-item',
-                    `toc-level-${item.level}`,
-                    activeHeadingId === item.id
-                      ? 'bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/30 dark:to-blue-900/30 text-purple-700 dark:text-purple-300 border-l-4 border-purple-500'
-                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-200',
-                  ]"
+                <!-- 目录导航 -->
+                <div class="max-h-[60vh] overflow-y-auto scrollbar-hide">
+                  <nav class="space-y-2">
+                    <button
+                      v-for="item in tocItems"
+                      :key="item.id"
+                      @click="scrollToHeading(item.id)"
+                      :class="[
+                        'block w-full text-left px-3 py-2.5 rounded-lg text-sm transition-all duration-200 toc-item relative group',
+                        `toc-level-${item.level}`,
+                        activeHeadingId === item.id
+                          ? 'bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 font-semibold'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100/80 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-gray-100 font-medium',
+                      ]"
+                    >
+                      <span class="block truncate leading-relaxed">{{
+                        item.text
+                      }}</span>
+                      <!-- 当前阅读位置指示器 -->
+                      <div
+                        v-if="activeHeadingId === item.id"
+                        class="absolute right-1.5 top-1/2 transform -translate-y-1/2 w-1 h-1 bg-blue-500 rounded-full"
+                      ></div>
+                    </button>
+                  </nav>
+                </div>
+
+                <!-- 底部信息 -->
+                <div
+                  class="mt-6 pt-4 border-t border-gray-200/50 dark:border-gray-700/50"
                 >
-                  {{ item.text }}
-                </button>
-              </nav>
+                  <div class="text-center">
+                    <div
+                      class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300 font-medium mb-2"
+                    >
+                      <span>{{ tocItems.length }} 章节</span>
+                      <span class="text-blue-600 dark:text-blue-400"
+                        >{{ Math.round(readingProgress) }}%</span
+                      >
+                    </div>
+                    <!-- 进度条 -->
+                    <div
+                      class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1"
+                    >
+                      <div
+                        class="bg-gradient-to-r from-blue-500 to-purple-500 h-1 rounded-full transition-all duration-300 ease-out"
+                        :style="{ width: `${readingProgress}%` }"
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 关闭按钮 -->
+                <div class="text-center mt-4">
+                  <button
+                    @click="toggleToc"
+                    class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200"
+                    title="隐藏目录"
+                  >
+                    <svg
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- 主要内容区域 -->
+          <!-- 主要内容区域 60% -->
           <div
-            class="flex-1 overflow-y-auto bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 relative"
+            :class="[
+              'overflow-y-auto bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800',
+              showToc && tocItems.length > 0 ? 'w-[60%]' : 'w-[80%]',
+            ]"
             id="modal-content"
             ref="contentContainer"
             @scroll="handleScroll"
           >
-            <!-- 阅读进度条 -->
+            <!-- 阅读进度条 - 增强视觉效果 -->
             <div
-              class="fixed top-0 left-0 right-0 z-30 h-1 bg-gray-200 dark:bg-gray-700"
+              class="fixed top-0 left-0 right-0 z-30 h-1 bg-gray-200/80 dark:bg-gray-700/80 backdrop-blur-sm"
             >
               <div
-                class="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300 ease-out"
+                class="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-500 ease-out shadow-sm"
                 :style="{ width: `${readingProgress}%` }"
+              ></div>
+              <!-- 进度条光效 -->
+              <div
+                class="absolute top-0 h-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-all duration-500 ease-out"
+                :style="{
+                  width: `${readingProgress}%`,
+                  transform: `translateX(${readingProgress > 0 ? '0' : '-100%'})`,
+                }"
               ></div>
             </div>
 
-            <!-- 悬浮按钮组 -->
-            <div class="fixed bottom-6 right-6 z-50 flex flex-col space-y-2">
+            <!-- 悬浮按钮组 - 优化移动端体验 -->
+            <div
+              class="fixed bottom-6 right-6 z-50 flex flex-col space-y-3 floating-buttons"
+            >
               <!-- 目录按钮 -->
               <button
                 @click="toggleToc"
                 :class="[
-                  'p-3 rounded-full shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200',
+                  'p-3 md:p-3.5 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 backdrop-blur-sm',
                   showToc
-                    ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white'
-                    : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700',
+                    ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-purple-500/25'
+                    : 'bg-white/90 dark:bg-gray-800/90 text-gray-600 dark:text-gray-300 border border-gray-200/50 dark:border-gray-700/50',
                 ]"
                 title="目录导航"
               >
                 <svg
-                  class="w-5 h-5"
+                  class="w-4 h-4 md:w-5 md:h-5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -737,15 +739,15 @@ function formatDate(date: Date): string {
               <button
                 @click="toggleFullWidth"
                 :class="[
-                  'p-3 rounded-full shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200',
+                  'p-3 md:p-3.5 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 backdrop-blur-sm',
                   isFullWidth
-                    ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
-                    : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:text-green-600 dark:hover:text-green-400',
+                    ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-green-500/25'
+                    : 'bg-white/90 dark:bg-gray-800/90 text-gray-600 dark:text-gray-300 border border-gray-200/50 dark:border-gray-700/50 hover:text-green-600 dark:hover:text-green-400',
                 ]"
                 title="全屏宽度"
               >
                 <svg
-                  class="w-5 h-5"
+                  class="w-4 h-4 md:w-5 md:h-5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -762,11 +764,11 @@ function formatDate(date: Date): string {
               <!-- 返回顶部按钮 -->
               <button
                 @click="scrollToTop"
-                class="p-3 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 rounded-full shadow-md hover:shadow-lg hover:text-blue-600 dark:hover:text-blue-400 transform hover:scale-105 transition-all duration-200"
+                class="p-3 md:p-3.5 bg-white/90 dark:bg-gray-800/90 text-gray-600 dark:text-gray-300 border border-gray-200/50 dark:border-gray-700/50 rounded-full shadow-lg hover:shadow-xl hover:text-blue-600 dark:hover:text-blue-400 transform hover:scale-105 transition-all duration-200 backdrop-blur-sm"
                 title="返回顶部"
               >
                 <svg
-                  class="w-5 h-5"
+                  class="w-4 h-4 md:w-5 md:h-5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -781,26 +783,37 @@ function formatDate(date: Date): string {
               </button>
             </div>
 
-            <!-- 文章内容容器 -->
-            <div
-              :class="[
-                'mx-auto py-8',
-                isFullWidth ? 'max-w-none px-4' : 'max-w-2xl px-6',
-              ]"
-            >
+            <!-- 文章内容容器 - 5%空白 + 90%内容 + 5%空白布局 -->
+            <div class="w-full flex">
+              <!-- 左侧5%空白 -->
+              <div class="w-[5%] flex-shrink-0"></div>
+
+              <!-- 90%文章内容区域 -->
+              <div class="w-[90%] px-4 md:px-8 py-8 md:py-12">
               <!-- 文章头部信息 -->
-              <div class="text-center mb-8 pb-6 relative">
-                <!-- 标题区域 -->
+              <header
+                class="mb-12 pb-8 text-center border-b border-gray-200/60 dark:border-gray-700/60"
+              >
+                <!-- 分类标签 -->
                 <div class="mb-6">
+                  <span
+                    class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 border border-blue-200/50 dark:border-blue-700/50"
+                  >
+                    {{ selectedPost.category }}
+                  </span>
+                </div>
+
+                <!-- 标题区域 -->
+                <div class="mb-8">
                   <h1
-                    class="text-3xl md:text-4xl font-bold mb-4 leading-tight bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 dark:from-white dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent"
+                    class="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight text-gray-900 dark:text-white tracking-tight"
                   >
                     {{ selectedPost.title }}
                   </h1>
 
                   <!-- 文章描述 -->
                   <p
-                    class="text-base text-gray-600 dark:text-gray-300 mb-6 leading-relaxed"
+                    class="text-lg md:text-xl text-gray-600 dark:text-gray-400 leading-relaxed max-w-3xl mx-auto font-light"
                   >
                     {{ selectedPost.description }}
                   </p>
@@ -808,36 +821,9 @@ function formatDate(date: Date): string {
 
                 <!-- 元信息 -->
                 <div
-                  class="flex items-center justify-center flex-wrap gap-4 text-sm bg-gray-50/80 dark:bg-gray-800/50 rounded-xl p-4 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50"
+                  class="flex items-center justify-center flex-wrap gap-6 text-sm text-gray-500 dark:text-gray-400"
                 >
                   <div class="flex items-center gap-2">
-                    <div
-                      class="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center"
-                    >
-                      <svg
-                        class="w-3 h-3 text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-                        />
-                      </svg>
-                    </div>
-                    <span
-                      class="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-md font-medium"
-                    >
-                      {{ selectedPost.category }}
-                    </span>
-                  </div>
-
-                  <div
-                    class="flex items-center gap-2 text-gray-600 dark:text-gray-300"
-                  >
                     <svg
                       class="w-4 h-4"
                       fill="none"
@@ -849,14 +835,11 @@ function formatDate(date: Date): string {
                         stroke-linejoin="round"
                         stroke-width="2"
                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                      />
+                      ></path>
                     </svg>
                     <span>{{ formatDate(selectedPost.date) }}</span>
                   </div>
-
-                  <div
-                    class="flex items-center gap-2 text-gray-600 dark:text-gray-300"
-                  >
+                  <div class="flex items-center gap-2">
                     <svg
                       class="w-4 h-4"
                       fill="none"
@@ -868,7 +851,7 @@ function formatDate(date: Date): string {
                         stroke-linejoin="round"
                         stroke-width="2"
                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
+                      ></path>
                     </svg>
                     <span
                       >{{
@@ -877,10 +860,7 @@ function formatDate(date: Date): string {
                       分钟阅读</span
                     >
                   </div>
-
-                  <div
-                    class="flex items-center gap-2 text-gray-600 dark:text-gray-300"
-                  >
+                  <div class="flex items-center gap-2">
                     <svg
                       class="w-4 h-4"
                       fill="none"
@@ -891,91 +871,53 @@ function formatDate(date: Date): string {
                         stroke-linecap="round"
                         stroke-linejoin="round"
                         stroke-width="2"
-                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                      />
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                      ></path>
                     </svg>
                     <span>{{ Math.round(readingProgress) }}% 已读</span>
                   </div>
                 </div>
-
-                <!-- 分割线 -->
-                <div
-                  class="mt-6 w-24 h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full mx-auto"
-                ></div>
-              </div>
+              </header>
 
               <!-- 文章内容 -->
-              <div
-                class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden"
+              <main
+                class="article-content"
+                :class="{ 'full-width': isFullWidth }"
               >
-                <!-- 内容头部装饰 -->
                 <div
-                  class="h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"
+                  class="prose prose-lg max-w-none dark:prose-invert markdown-content enhanced-content reading-content"
+                  v-html="selectedPost.content"
                 ></div>
-
-                <div class="p-6 lg:p-8">
-                  <!-- 文章正文 -->
-                  <div
-                    class="prose prose-lg max-w-none dark:prose-invert markdown-content enhanced-content"
-                    v-html="selectedPost.content"
-                  ></div>
-                </div>
-              </div>
+              </main>
 
               <!-- 评论系统 -->
               <div
-                class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden mt-8"
+                class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700"
               >
-                <!-- 评论区头部装饰 -->
-                <div
-                  class="h-1 bg-gradient-to-r from-green-500 via-teal-500 to-blue-500"
-                ></div>
-
-                <div class="p-6 lg:p-8">
-                  <!-- 评论区标题 -->
-                  <div class="flex items-center gap-3 mb-6">
-                    <div
-                      class="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center"
-                    >
-                      <svg
-                        class="w-4 h-4 text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                        />
-                      </svg>
-                    </div>
-                    <div>
-                      <h3
-                        class="text-lg font-semibold text-gray-900 dark:text-white"
-                      >
-                        文章评论
-                      </h3>
-                      <p class="text-sm text-gray-600 dark:text-gray-400">
-                        欢迎在这里分享您的想法和见解
-                      </p>
-                    </div>
-                  </div>
-
-                  <!-- 评论系统 -->
-                  <CommentSystem
-                    :default-system="'twikoo'"
-                    :show-selector="true"
-                    :theme="'auto'"
-                    :term="selectedPost.title"
-                    :enable-twikoo="true"
-                    :enable-giscus="true"
-                  />
-                </div>
+                <h3
+                  class="text-lg font-semibold text-gray-900 dark:text-white mb-4"
+                >
+                  评论
+                </h3>
+                <CommentSystem
+                  :default-system="'twikoo'"
+                  :show-selector="true"
+                  :theme="'auto'"
+                  :term="selectedPost.title"
+                  :enable-twikoo="true"
+                  :enable-giscus="true"
+                />
               </div>
             </div>
           </div>
+
+          <!-- 右侧空白区域 10% -->
+          <div
+            :class="[
+              showToc && tocItems.length > 0 ? 'w-[10%]' : 'w-[10%]',
+              'bg-transparent',
+            ]"
+          ></div>
         </div>
       </div>
     </div>
@@ -1002,49 +944,60 @@ function formatDate(date: Date): string {
   transform: translateY(-4px);
 }
 
-/* 渐变动画 */
-@keyframes gradient-shift {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
+/* 移除花哨动画 */
+
+/* 文章内容容器 - 优化阅读体验 */
+.article-content {
+  max-width: 72ch; /* 最佳阅读行长度 */
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  position: relative;
 }
 
-.bg-gradient-to-r {
-  background-size: 200% 200%;
-  animation: gradient-shift 3s ease infinite;
+/* 文章内容区域渐入动画 */
+.article-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  border-radius: 2px;
+  margin-bottom: 2rem;
 }
 
-/* 脉冲动画优化 */
-@keyframes pulse-soft {
-  0%,
-  100% {
-    opacity: 0.6;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.05);
-  }
-}
-
-.animate-pulse {
-  animation: pulse-soft 2s ease-in-out infinite;
-}
-
-/* Markdown 内容样式 - 使用固定值确保生效 */
+/* 提升阅读体验的额外样式 */
 .markdown-content {
-  line-height: 1.8 !important;
-  color: #111827 !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+/* 选中文本样式 */
+.markdown-content ::selection {
+  background-color: #dbeafe !important;
+  color: #1e40af !important;
+}
+
+.dark .markdown-content ::selection {
+  background-color: #1e3a8a !important;
+  color: #bfdbfe !important;
+}
+
+/* Markdown 内容基础样式 - 优化阅读体验 */
+.markdown-content {
+  line-height: 1.8 !important; /* 增加行高提升可读性 */
+  color: #374151 !important;
   font-size: 1.125rem !important;
   font-weight: 400 !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans SC", sans-serif !important;
+  letter-spacing: 0.01em !important; /* 轻微字符间距 */
 }
 
 .dark .markdown-content {
-  color: #f9fafb !important;
+  color: #e5e7eb !important;
 }
 
 /* 增强的内容样式 */
@@ -1052,344 +1005,439 @@ function formatDate(date: Date): string {
   text-rendering: optimizeLegibility !important;
   -webkit-font-smoothing: antialiased !important;
   -moz-osx-font-smoothing: grayscale !important;
+  hyphens: auto !important; /* 自动断词 */
 }
 
-.enhanced-content p {
-  margin-bottom: 1.5rem !important;
-  text-align: justify !important;
-  text-justify: inter-word !important;
+/* 阅读内容特殊样式 */
+.reading-content {
+  text-align: justify !important; /* 两端对齐 */
+  text-justify: inter-ideograph !important; /* 中文优化 */
 }
 
-.enhanced-content p:last-child {
+/* 段落样式优化 - 提升阅读体验 */
+.markdown-content p {
+  margin-bottom: 1.75rem !important; /* 增加段落间距 */
+  line-height: 1.8 !important;
+  color: #374151 !important;
+  text-align: justify !important; /* 两端对齐 */
+  text-justify: inter-ideograph !important;
+  font-size: 1.125rem !important;
+  font-weight: 400 !important;
+}
+
+.dark .markdown-content p {
+  color: #e5e7eb !important;
+}
+
+.markdown-content p:last-child {
   margin-bottom: 0 !important;
 }
 
-/* 文章正文首字母装饰 */
-.enhanced-content > p:first-child::first-letter {
-  float: left;
-  font-size: 3.5rem;
-  line-height: 2.8rem;
-  padding-right: 0.5rem;
-  padding-top: 0.25rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-family: serif;
-  margin-bottom: 0.5rem;
+/* 首段特殊样式 */
+.markdown-content > p:first-of-type {
+  font-size: 1.2rem !important;
+  font-weight: 450 !important;
+  color: #1f2937 !important;
+  margin-bottom: 2rem !important;
 }
 
-.dark .enhanced-content > p:first-child::first-letter {
-  background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.dark .markdown-content > p:first-of-type {
+  color: #f3f4f6 !important;
 }
 
-/* 强制标题样式 - 使用固定像素值 */
+/* 移除首字母装饰 */
+
+/* 标题样式优化 - 改进视觉层次 */
 .markdown-content h1 {
   font-size: 2.25rem !important;
-  font-weight: 700 !important;
+  font-weight: 800 !important;
   line-height: 1.2 !important;
-  margin-top: 3rem !important;
-  margin-bottom: 1.5rem !important;
+  margin-top: 4rem !important;
+  margin-bottom: 2rem !important;
   color: #111827 !important;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899) !important;
-  background-clip: text !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
+  border-bottom: 2px solid #e5e7eb !important;
+  padding-bottom: 1rem !important;
   position: relative !important;
-  display: block !important;
+  letter-spacing: -0.025em !important;
 }
 
-.markdown-content h1::after {
-  content: "";
-  position: absolute;
-  bottom: -0.5rem;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
-  border-radius: 2px;
-  opacity: 0.6;
+.markdown-content h1:first-child {
+  margin-top: 2rem !important;
 }
 
 .dark .markdown-content h1 {
-  background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6) !important;
-  background-clip: text !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
+  color: #f9fafb !important;
+  border-bottom-color: #374151 !important;
+}
+
+/* H1 装饰线 */
+.markdown-content h1::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  border-radius: 1px;
 }
 
 .markdown-content h2 {
-  font-size: 1.875rem !important;
-  font-weight: 600 !important;
+  font-size: 1.75rem !important;
+  font-weight: 700 !important;
   line-height: 1.3 !important;
-  margin-top: 2.5rem !important;
-  margin-bottom: 1.25rem !important;
+  margin-top: 3rem !important;
+  margin-bottom: 1.5rem !important;
   color: #1f2937 !important;
+  border-left: 4px solid #3b82f6 !important;
+  padding-left: 1rem !important;
   position: relative !important;
-  display: block !important;
-}
-
-.markdown-content h2::before {
-  content: "";
-  position: absolute;
-  left: -1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 4px;
-  height: 1.5rem;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  border-radius: 2px;
+  letter-spacing: -0.015em !important;
 }
 
 .dark .markdown-content h2 {
   color: #f9fafb !important;
 }
 
+/* H2 背景装饰 */
+.markdown-content h2::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, #3b82f6, #8b5cf6);
+  border-radius: 2px;
+}
+
 .markdown-content h3 {
-  font-size: 1.5rem !important;
-  font-weight: 600 !important;
+  font-size: 1.375rem !important;
+  font-weight: 650 !important;
   line-height: 1.4 !important;
-  margin-top: 2rem !important;
+  margin-top: 2.5rem !important;
   margin-bottom: 1rem !important;
   color: #374151 !important;
-  display: block !important;
+  position: relative !important;
+  padding-left: 0.5rem !important;
 }
 
 .dark .markdown-content h3 {
   color: #e5e7eb !important;
 }
 
+/* H3 装饰点 */
+.markdown-content h3::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background: #3b82f6;
+  border-radius: 50%;
+}
+
 .markdown-content h4 {
-  font-size: 18px !important;
+  font-size: 1.25rem !important;
   font-weight: 600 !important;
   line-height: 1.4 !important;
-  margin-top: 24px !important;
-  margin-bottom: 12px !important;
-  color: #111827 !important;
-  display: block !important;
+  margin-top: 2rem !important;
+  margin-bottom: 0.75rem !important;
+  color: #374151 !important;
+  font-weight: 600 !important;
 }
 
 .dark .markdown-content h4 {
-  color: #f9fafb !important;
+  color: #e5e7eb !important;
 }
 
 .markdown-content h5 {
-  font-size: 16px !important;
+  font-size: 1.125rem !important;
   font-weight: 600 !important;
   line-height: 1.4 !important;
-  margin-top: 16px !important;
-  margin-bottom: 8px !important;
-  color: #111827 !important;
-  display: block !important;
+  margin-top: 1.75rem !important;
+  margin-bottom: 0.75rem !important;
+  color: #374151 !important;
 }
 
 .dark .markdown-content h5 {
-  color: #f9fafb !important;
+  color: #e5e7eb !important;
 }
 
 .markdown-content h6 {
-  font-size: 14px !important;
+  font-size: 1rem !important;
   font-weight: 600 !important;
   line-height: 1.4 !important;
-  margin-top: 16px !important;
-  margin-bottom: 8px !important;
-  color: #111827 !important;
-  display: block !important;
+  margin-top: 1.5rem !important;
+  margin-bottom: 0.5rem !important;
+  color: #374151 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  font-size: 0.875rem !important;
 }
 
 .dark .markdown-content h6 {
-  color: #f9fafb !important;
+  color: #e5e7eb !important;
 }
 
-.markdown-content p {
-  margin-bottom: 1rem !important;
-}
-
+/* 列表样式优化 */
 .markdown-content ul,
 .markdown-content ol {
   margin-bottom: 1.5rem !important;
-  padding-left: 0 !important;
-  list-style: none !important;
+  padding-left: 1.75rem !important;
 }
 
-.markdown-content ul li,
-.markdown-content ol li {
-  margin-bottom: 0.75rem !important;
-  padding-left: 2rem !important;
-  position: relative !important;
-  line-height: 1.7 !important;
-}
-
-.markdown-content ul li::before {
-  content: "";
-  position: absolute;
-  left: 0.5rem;
-  top: 0.75rem;
-  width: 6px;
-  height: 6px;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  border-radius: 50%;
-  transform: translateY(-50%);
-}
-
-.markdown-content ol {
-  counter-reset: list-counter;
-}
-
-.markdown-content ol li {
-  counter-increment: list-counter;
-}
-
-.markdown-content ol li::before {
-  content: counter(list-counter);
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 1.5rem;
-  height: 1.5rem;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.markdown-content strong {
-  font-weight: 600 !important;
-  color: var(--color-text-primary, #111827) !important;
-}
-
-.markdown-content code {
-  background-color: var(--color-bg-secondary, #f9fafb) !important;
-  padding: 0.2rem 0.4rem !important;
-  border-radius: 0.25rem !important;
-  font-size: 0.875rem !important;
-  font-family: "Courier New", monospace !important;
-}
-
-.markdown-content pre {
-  background-color: var(--color-bg-secondary, #f9fafb) !important;
-  padding: 1rem !important;
-  border-radius: 0.5rem !important;
-  overflow-x: auto !important;
-  margin-bottom: 1rem !important;
-}
-
-.markdown-content pre code {
-  background-color: transparent !important;
-  padding: 0 !important;
-}
-
-.markdown-content blockquote {
-  border-left: 4px solid var(--color-primary, #3b82f6) !important;
-  padding-left: 1rem !important;
-  margin: 1rem 0 !important;
-  font-style: italic !important;
-  color: var(--color-text-secondary, #4b5563) !important;
-}
-
-.markdown-content a {
-  color: #3b82f6 !important;
-  text-decoration: none !important;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6) !important;
-  background-clip: text !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  position: relative !important;
-  font-weight: 500 !important;
-  transition: all 0.3s ease !important;
-}
-
-.markdown-content a::after {
-  content: "";
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  transition: width 0.3s ease;
-}
-
-.markdown-content a:hover::after {
-  width: 100%;
-}
-
-.markdown-content a:hover {
-  background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
-  background-clip: text !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  transform: translateY(-1px) !important;
-}
-
-.markdown-content hr {
-  border: none !important;
-  border-top: 1px solid var(--color-border-light, #f3f4f6) !important;
-  margin: 2rem 0 !important;
+.markdown-content ul {
+  list-style-type: disc !important;
 }
 
 .markdown-content ol {
   list-style-type: decimal !important;
-  margin-bottom: 1rem !important;
-  padding-left: 1.5rem !important;
 }
 
+.markdown-content ul li,
+.markdown-content ol li {
+  margin-bottom: 0.5rem !important;
+  line-height: 1.75 !important;
+  color: #374151 !important;
+}
+
+.dark .markdown-content ul li,
+.dark .markdown-content ol li {
+  color: #e5e7eb !important;
+}
+
+/* 嵌套列表样式 */
+.markdown-content ul ul,
+.markdown-content ol ol,
+.markdown-content ul ol,
+.markdown-content ol ul {
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* 强调文本样式 */
+.markdown-content strong {
+  font-weight: 600 !important;
+  color: #111827 !important;
+}
+
+.dark .markdown-content strong {
+  color: #f9fafb !important;
+}
+
+/* 内联代码样式 */
+.markdown-content code {
+  background-color: #f3f4f6 !important;
+  color: #dc2626 !important;
+  padding: 0.125rem 0.375rem !important;
+  border-radius: 0.25rem !important;
+  font-size: 0.875rem !important;
+  font-family: "SF Mono", "Monaco", "Inconsolata", "Roboto Mono", "Courier New",
+    monospace !important;
+  font-weight: 500 !important;
+}
+
+.dark .markdown-content code {
+  background-color: #374151 !important;
+  color: #fca5a5 !important;
+}
+
+/* 代码块样式 */
+.markdown-content pre {
+  background-color: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  padding: 1.25rem !important;
+  border-radius: 0.5rem !important;
+  overflow-x: auto !important;
+  margin: 1.5rem 0 !important;
+  position: relative !important;
+}
+
+.dark .markdown-content pre {
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+}
+
+.markdown-content pre code {
+  background-color: transparent !important;
+  color: #334155 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  font-size: 0.875rem !important;
+}
+
+.dark .markdown-content pre code {
+  color: #e2e8f0 !important;
+}
+
+/* 引用块样式 - 增强视觉效果 */
+.markdown-content blockquote {
+  border-left: 4px solid #3b82f6 !important;
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.08) 0%,
+    rgba(139, 92, 246, 0.08) 100%
+  ) !important;
+  padding: 1.75rem !important;
+  margin: 2.5rem 0 !important;
+  border-radius: 0 1rem 1rem 0 !important;
+  font-style: italic !important;
+  color: #374151 !important;
+  position: relative !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1) !important;
+  border: 1px solid rgba(59, 130, 246, 0.1) !important;
+  border-left: 4px solid #3b82f6 !important;
+  font-size: 1.0625rem !important;
+  line-height: 1.75 !important;
+}
+
+.dark .markdown-content blockquote {
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.15) 0%,
+    rgba(139, 92, 246, 0.15) 100%
+  ) !important;
+  color: #e5e7eb !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2) !important;
+  border-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+/* 引用块装饰 */
+.markdown-content blockquote::before {
+  content: '"';
+  position: absolute;
+  top: -0.5rem;
+  left: 1rem;
+  font-size: 3rem;
+  color: #3b82f6;
+  opacity: 0.3;
+  font-family: serif;
+  line-height: 1;
+}
+
+/* 链接样式 */
+.markdown-content a {
+  color: #3b82f6 !important;
+  text-decoration: underline !important;
+  text-decoration-thickness: 1px !important;
+  text-underline-offset: 2px !important;
+  font-weight: 500 !important;
+  transition: color 0.2s ease !important;
+}
+
+.markdown-content a:hover {
+  color: #1d4ed8 !important;
+}
+
+.dark .markdown-content a {
+  color: #60a5fa !important;
+}
+
+.dark .markdown-content a:hover {
+  color: #93c5fd !important;
+}
+
+/* 分隔线样式 */
+.markdown-content hr {
+  border: none !important;
+  border-top: 1px solid #e5e7eb !important;
+  margin: 2.5rem 0 !important;
+}
+
+.dark .markdown-content hr {
+  border-top-color: #374151 !important;
+}
+
+/* 表格样式 */
 .markdown-content table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 1rem 0;
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  margin: 2.5rem 0 !important;
+  border-radius: 0.75rem !important;
+  overflow: hidden !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.1),
+    0 4px 10px rgba(0, 0, 0, 0.05) !important;
+}
+
+.dark .markdown-content table {
+  border-color: #374151 !important;
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.3),
+    0 4px 10px rgba(0, 0, 0, 0.2) !important;
 }
 
 .markdown-content th,
 .markdown-content td {
-  border: 1px solid var(--color-border-light);
-  padding: 0.5rem;
-  text-align: left;
+  border: 1px solid #e5e7eb !important;
+  padding: 1rem 1.25rem !important;
+  text-align: left !important;
+  line-height: 1.6 !important;
+  transition: all 0.2s ease !important;
+}
+
+.dark .markdown-content th,
+.dark .markdown-content td {
+  border-color: #374151 !important;
 }
 
 .markdown-content th {
-  background-color: var(--color-bg-secondary);
-  font-weight: 600;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+  font-weight: 600 !important;
+  color: #374151 !important;
+  font-size: 0.9375rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  border-bottom: 2px solid #e5e7eb !important;
 }
 
+.dark .markdown-content th {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+  color: #e2e8f0 !important;
+  border-bottom-color: #475569 !important;
+}
+
+.markdown-content td {
+  color: #374151 !important;
+}
+
+.dark .markdown-content td {
+  color: #e5e7eb !important;
+}
+
+/* 表格行悬停效果 */
+.markdown-content tbody tr:hover td {
+  background-color: rgba(59, 130, 246, 0.05) !important;
+}
+
+.dark .markdown-content tbody tr:hover td {
+  background-color: rgba(59, 130, 246, 0.1) !important;
+}
+
+/* 表格最后一行 */
+.markdown-content tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+/* 图片样式 */
 .markdown-content img {
   max-width: 100% !important;
   height: auto !important;
-  border-radius: 12px !important;
+  border-radius: 0.5rem !important;
   margin: 2rem auto !important;
   display: block !important;
-  box-shadow:
-    0 10px 25px -5px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
-  transition: all 0.3s ease !important;
-  cursor: zoom-in !important;
-}
-
-.markdown-content img:hover {
-  transform: scale(1.02) translateY(-4px) !important;
-  box-shadow:
-    0 20px 40px -5px rgba(0, 0, 0, 0.15),
-    0 8px 12px -2px rgba(0, 0, 0, 0.08) !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
 }
 
 .dark .markdown-content img {
-  box-shadow:
-    0 10px 25px -5px rgba(0, 0, 0, 0.3),
-    0 4px 6px -2px rgba(0, 0, 0, 0.2) !important;
-}
-
-.dark .markdown-content img:hover {
-  box-shadow:
-    0 20px 40px -5px rgba(0, 0, 0, 0.4),
-    0 8px 12px -2px rgba(0, 0, 0, 0.3) !important;
+  border-color: #374151 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3) !important;
 }
 
 /* 全屏模态框样式优化 */
@@ -1428,6 +1476,7 @@ function formatDate(date: Date): string {
 .prose.prose-lg {
   font-size: 1.125rem;
   line-height: 1.8;
+  max-width: 85ch !important; /* 全屏模式下更宽的阅读区域 */
 }
 
 /* 全屏模式下的标题间距优化 */
@@ -1435,40 +1484,114 @@ function formatDate(date: Date): string {
   margin-top: 0 !important;
 }
 
+/* 全屏模式下的文章容器 */
+.article-content.full-width {
+  max-width: 90ch !important;
+  padding: 0 2rem !important;
+}
+
+/* 全屏模式下的段落优化 */
+.full-width .markdown-content p {
+  font-size: 1.1875rem !important;
+  line-height: 1.8 !important;
+  margin-bottom: 1.875rem !important;
+}
+
+/* 全屏模式下的标题优化 */
+.full-width .markdown-content h1 {
+  font-size: 2.5rem !important;
+  margin-top: 4.5rem !important;
+  margin-bottom: 2.25rem !important;
+}
+
+.full-width .markdown-content h2 {
+  font-size: 2rem !important;
+  margin-top: 3.5rem !important;
+  margin-bottom: 1.75rem !important;
+}
+
+.full-width .markdown-content h3 {
+  font-size: 1.5rem !important;
+  margin-top: 3rem !important;
+  margin-bottom: 1.25rem !important;
+}
+
 /* 全屏模态框背景模糊效果 */
 .backdrop-blur-sm {
   backdrop-filter: blur(4px);
 }
 
-/* 目录样式 */
+/* 目录样式优化 */
 .toc-item {
   position: relative;
+  border-radius: 8px !important;
 }
 
 .toc-level-1 {
   margin-left: 0;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 1rem;
 }
 
 .toc-level-2 {
-  margin-left: 1rem;
-  font-weight: 500;
+  margin-left: 0.75rem;
+  font-weight: 600;
+  font-size: 0.95rem;
 }
 
 .toc-level-3 {
-  margin-left: 2rem;
+  margin-left: 1.5rem;
+  font-weight: 500;
+  font-size: 0.9rem;
 }
 
 .toc-level-4 {
-  margin-left: 3rem;
+  margin-left: 2.25rem;
+  font-weight: 500;
+  font-size: 0.85rem;
 }
 
 .toc-level-5 {
-  margin-left: 4rem;
+  margin-left: 3rem;
+  font-weight: 400;
+  font-size: 0.8rem;
 }
 
 .toc-level-6 {
-  margin-left: 5rem;
+  margin-left: 3.75rem;
+  font-weight: 400;
+  font-size: 0.8rem;
+}
+
+/* 布局动画 */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.w-\[20\%\] {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* 隐藏滚动条 */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+/* 布局动画 */
+.w-\[20\%\] {
+  animation: slideIn 0.3s ease-out;
 }
 
 /* 目录滚动条样式 */
@@ -1498,17 +1621,92 @@ function formatDate(date: Date): string {
   background: rgba(75, 85, 99, 0.5);
 }
 
-/* 响应式优化 */
+/* 响应式优化 - 移动端阅读体验 */
 @media (max-width: 768px) {
-  .max-w-2xl {
+  /* 移动端文章容器 */
+  .article-content {
     max-width: 100%;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding: 0 1rem;
   }
 
-  .prose.prose-lg {
-    font-size: 1rem;
-    line-height: 1.7;
+  /* 移动端字体调整 */
+  .markdown-content {
+    font-size: 1.0625rem !important; /* 稍大的字体提升移动端可读性 */
+    line-height: 1.75 !important;
+    letter-spacing: 0.015em !important;
+  }
+
+  .markdown-content p {
+    margin-bottom: 1.5rem !important;
+    line-height: 1.75 !important;
+    text-align: left !important; /* 移动端左对齐更好 */
+  }
+
+  /* 移动端首段样式 */
+  .markdown-content > p:first-of-type {
+    font-size: 1.125rem !important;
+    margin-bottom: 1.75rem !important;
+  }
+
+  /* 移动端标题调整 - 优化层级和间距 */
+  .markdown-content h1 {
+    font-size: 1.875rem !important;
+    margin-top: 2.5rem !important;
+    margin-bottom: 1.25rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+
+  .markdown-content h1:first-child {
+    margin-top: 1.5rem !important;
+  }
+
+  .markdown-content h2 {
+    font-size: 1.5rem !important;
+    margin-top: 2.25rem !important;
+    margin-bottom: 1rem !important;
+    padding-left: 0.75rem !important;
+  }
+
+  .markdown-content h3 {
+    font-size: 1.25rem !important;
+    margin-top: 2rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  .markdown-content h4 {
+    font-size: 1.125rem !important;
+    margin-top: 1.75rem !important;
+  }
+
+  .markdown-content h5 {
+    font-size: 1.0625rem !important;
+    margin-top: 1.5rem !important;
+  }
+
+  .markdown-content h6 {
+    font-size: 0.9375rem !important;
+    margin-top: 1.25rem !important;
+  }
+
+  /* 移动端代码块优化 */
+  .markdown-content pre {
+    padding: 1rem !important;
+    margin: 1rem 0 !important;
+    border-radius: 0.375rem !important;
+  }
+
+  .markdown-content pre code {
+    font-size: 0.8rem !important;
+  }
+
+  /* 移动端表格优化 */
+  .markdown-content table {
+    font-size: 0.875rem !important;
+  }
+
+  .markdown-content th,
+  .markdown-content td {
+    padding: 0.5rem !important;
   }
 
   /* 移动端头部优化 */
@@ -1517,25 +1715,20 @@ function formatDate(date: Date): string {
     padding-right: 1rem;
   }
 
-  /* 移动端卡片优化 */
-  .grid.gap-8 {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  /* 移动端标题优化 */
-  .text-5xl {
-    font-size: 2.5rem;
-  }
-
-  /* 移动端目录优化 */
-  .w-80 {
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 10;
-    height: 100%;
+  /* 移动端悬浮目录优化 */
+  .fixed.top-1\/2.left-8 {
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 85vw !important;
+    max-width: 320px !important;
+    max-height: 65vh !important;
+    border-radius: 1rem !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    box-shadow:
+      0 25px 50px rgba(0, 0, 0, 0.15),
+      0 10px 20px rgba(0, 0, 0, 0.1) !important;
   }
 
   /* 移动端头部信息优化 */
@@ -1625,6 +1818,16 @@ function formatDate(date: Date): string {
     padding: 1rem !important;
   }
 
+  /* 移动端文章容器优化 */
+  .px-20 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  .max-w-5xl {
+    max-width: 100% !important;
+  }
+
   /* 移动端列表优化 */
   .markdown-content ul li,
   .markdown-content ol li {
@@ -1638,18 +1841,24 @@ function formatDate(date: Date): string {
   }
 
   /* 移动端悬浮按钮优化 */
-  .fixed.bottom-6.right-6 {
-    bottom: 1rem;
-    right: 1rem;
+  .floating-buttons {
+    bottom: 1.25rem !important;
+    right: 1rem !important;
+    gap: 0.75rem !important;
   }
 
-  .fixed.bottom-6.right-6 button {
-    padding: 0.5rem;
+  .floating-buttons button {
+    width: 44px !important;
+    height: 44px !important;
+    padding: 0 !important;
+    box-shadow:
+      0 8px 25px rgba(0, 0, 0, 0.15),
+      0 4px 10px rgba(0, 0, 0, 0.1) !important;
   }
 
-  .fixed.bottom-6.right-6 svg {
-    width: 0.875rem;
-    height: 0.875rem;
+  .floating-buttons svg {
+    width: 1rem !important;
+    height: 1rem !important;
   }
 
   /* 移动端字体调节组优化 */
@@ -1682,6 +1891,60 @@ function formatDate(date: Date): string {
     width: 1.25rem;
     height: 1.25rem;
   }
+
+  /* 移动端元信息卡片优化 */
+  .inline-flex.items-center.justify-center.flex-wrap.gap-6 {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .inline-flex.items-center.justify-center.flex-wrap.gap-6 > div {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* 移动端主要内容区域边距重置 */
+  #modal-content {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* 移动端新布局调整 */
+  .w-full.h-full.flex {
+    flex-direction: column !important;
+  }
+
+  .w-\[10\%\] {
+    display: none !important;
+  }
+
+  .w-\[20\%\] {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 40vh !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    z-index: 50 !important;
+    transform: translateY(-100%) !important;
+    transition: transform 0.3s ease !important;
+  }
+
+  .w-\[20\%\].show {
+    transform: translateY(0) !important;
+  }
+
+  .w-\[60\%\] {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* 移动端文章内容容器 */
+  .w-full.px-8 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
 }
 
 /* 代码块增强样式 */
@@ -1689,35 +1952,35 @@ function formatDate(date: Date): string {
   position: relative !important;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
   border: 1px solid #e2e8f0 !important;
-  border-radius: 16px !important;
-  padding: 1.5rem !important;
-  margin: 2rem 0 !important;
+  border-radius: 20px !important;
+  padding: 1.75rem !important;
+  margin: 2.5rem 0 !important;
   overflow-x: auto !important;
   box-shadow:
-    0 8px 25px -5px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+    0 10px 30px -5px rgba(0, 0, 0, 0.1),
+    0 6px 8px -2px rgba(0, 0, 0, 0.05) !important;
   transition: all 0.3s ease !important;
 }
 
 .markdown-content pre:hover {
   box-shadow:
-    0 12px 35px -5px rgba(0, 0, 0, 0.15),
-    0 6px 10px -2px rgba(0, 0, 0, 0.08) !important;
-  transform: translateY(-2px) !important;
+    0 15px 40px -5px rgba(0, 0, 0, 0.15),
+    0 8px 12px -2px rgba(0, 0, 0, 0.08) !important;
+  transform: translateY(-3px) !important;
 }
 
 .dark .markdown-content pre {
   background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
   border-color: #475569 !important;
   box-shadow:
-    0 8px 25px -5px rgba(0, 0, 0, 0.3),
-    0 4px 6px -2px rgba(0, 0, 0, 0.2) !important;
+    0 10px 30px -5px rgba(0, 0, 0, 0.3),
+    0 6px 8px -2px rgba(0, 0, 0, 0.2) !important;
 }
 
 .dark .markdown-content pre:hover {
   box-shadow:
-    0 12px 35px -5px rgba(0, 0, 0, 0.4),
-    0 6px 10px -2px rgba(0, 0, 0, 0.3) !important;
+    0 15px 40px -5px rgba(0, 0, 0, 0.4),
+    0 8px 12px -2px rgba(0, 0, 0, 0.3) !important;
 }
 
 .markdown-content pre code {
@@ -1725,7 +1988,7 @@ function formatDate(date: Date): string {
   color: #334155 !important;
   font-family: "JetBrains Mono", "Fira Code", "SF Mono", "Consolas",
     "Liberation Mono", "Menlo", monospace !important;
-  font-size: 0.875rem !important;
+  font-size: 0.9rem !important;
   line-height: 1.7 !important;
   font-weight: 400 !important;
   letter-spacing: 0.025em !important;
@@ -1735,12 +1998,68 @@ function formatDate(date: Date): string {
   color: #e2e8f0 !important;
 }
 
-/* 复制按钮样式 */
+/* 复制按钮样式优化 */
 .markdown-content pre .copy-button {
+  position: absolute !important;
+  top: 12px !important;
+  right: 12px !important;
+  background: rgba(255, 255, 255, 0.9) !important;
   backdrop-filter: blur(10px) !important;
   -webkit-backdrop-filter: blur(10px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 10px !important;
+  padding: 8px !important;
+  color: #6b7280 !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.1) !important;
+  opacity: 0 !important;
+  transform: translateY(-2px) !important;
+}
+
+.dark .markdown-content pre .copy-button {
+  background: rgba(31, 41, 55, 0.9) !important;
+  border-color: rgba(75, 85, 99, 0.3) !important;
+  color: #9ca3af !important;
+}
+
+.markdown-content pre:hover .copy-button {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.markdown-content pre .copy-button:hover {
+  background: rgba(255, 255, 255, 1) !important;
+  color: #374151 !important;
+  transform: scale(1.05) !important;
+  box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.15) !important;
+}
+
+.dark .markdown-content pre .copy-button:hover {
+  background: rgba(31, 41, 55, 1) !important;
+  color: #e5e7eb !important;
+}
+
+/* 桌面端布局优化 */
+@media (min-width: 769px) {
+  .w-full.h-full.flex {
+    flex-direction: row !important;
+  }
+
+  .w-\[10\%\] {
+    display: block !important;
+  }
+
+  .w-\[20\%\] {
+    position: static !important;
+    transform: none !important;
+    width: 20% !important;
+    height: 100% !important;
+    max-height: none !important;
+  }
+
+  .w-\[60\%\] {
+    width: 60% !important;
+  }
 }
 
 .markdown-content pre .copy-button:hover {

@@ -2,6 +2,7 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
 import "./assets/styles/main.css";
+import "./assets/prism-custom.css";
 import { initFontLoading } from "./utils/font";
 
 const app = createApp(App);
